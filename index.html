@@ -273,6 +273,29 @@
   margin-top:10px;
   line-height:1.6;
 }
+
+/* ── SHOPPING LIST ── */
+.shop-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:13px 14px;margin-bottom:8px;transition:border-color 0.2s;}
+.shop-item.bought{background:rgba(61,122,83,0.07);border-color:rgba(61,122,83,0.2);opacity:0.75;}
+.shop-row{display:flex;align-items:center;gap:10px;}
+.shop-chk{width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,0.2);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;transition:all 0.2s;}
+.shop-chk.on{background:var(--moss);border-color:var(--moss);}
+.shop-name-txt{font-size:0.9rem;color:var(--paper);}
+.shop-name-txt.struck{text-decoration:line-through;color:var(--text-dim);}
+.shop-meta-txt{font-size:0.68rem;color:var(--text-dim);margin-top:2px;}
+.qty-row{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border-radius:10px;padding:2px 4px;}
+.qty-row button{background:none;border:none;color:var(--paper);padding:4px 8px;cursor:pointer;font-size:1rem;}
+.qty-row span{min-width:20px;text-align:center;font-size:0.88rem;}
+.price-pill{display:inline-flex;align-items:center;gap:3px;font-size:0.68rem;padding:2px 8px;border-radius:8px;white-space:nowrap;}
+.price-pill.base{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);}
+.price-pill.visa{background:rgba(74,144,217,0.12);border:1px solid rgba(74,144,217,0.3);color:#7bbfef;}
+.price-pill.gray{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);}
+.shop-ai-box{background:rgba(123,94,167,0.08);border:1px solid rgba(123,94,167,0.2);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.76rem;color:rgba(250,248,243,0.75);line-height:1.7;}
+.shop-summary{background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(244,167,185,0.05));border:1px solid rgba(201,168,76,0.2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.hotchip{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:5px 10px;border-radius:14px;font-size:0.72rem;cursor:pointer;color:rgba(250,248,243,0.65);transition:all 0.2s;}
+.hotchip:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08);}
+.add-form{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px;margin-bottom:14px;}
+.cat-sel{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 14px;color:var(--paper);font-family:'Noto Sans TC',sans-serif;font-size:0.82rem;outline:none;appearance:none;}
 </style>
 <style>
 :root {
@@ -823,6 +846,16 @@ body::before {
       <span>匯率換算</span>
       <span style="font-size:0.65rem;opacity:0.7;">日圓↔台幣</span>
     </button>
+    <button class="btn btn-success" style="flex-direction:column;padding:16px;border-radius:16px;font-size:0.78rem;" onclick="switchPanel('shopping')">
+      <span style="font-size:1.5rem;">🛒</span>
+      <span>購物清單</span>
+      <span style="font-size:0.65rem;opacity:0.7;">AI查售價</span>
+    </button>
+    <button class="btn btn-sky" style="flex-direction:column;padding:16px;border-radius:16px;font-size:0.78rem;" onclick="switchPanel('map')">
+      <span style="font-size:1.5rem;">🗺️</span>
+      <span>景點導航</span>
+      <span style="font-size:0.65rem;opacity:0.7;">一鍵開啟地圖</span>
+    </button>
   </div>
 
   <!-- Kids Profile -->
@@ -958,18 +991,42 @@ body::before {
 
 <!-- CURRENCY PANEL -->
 <div id="panel-currency" class="panel">
-  <div class="section-label">匯率換算</div>
+  <div class="section-label">匯率換算 · Visa 刷卡匯率</div>
 
-  <div class="stat-grid" style="margin-bottom:14px;">
-    <div class="stat-card">
-      <div class="stat-val" style="font-size:1.3rem;">¥100</div>
-      <div class="stat-lbl">≈ NT$ <span id="rate-display">22.2</span></div>
-      <div style="font-size:0.65rem;color:rgba(250,248,243,0.3);margin-top:3px;">JPY→TWD</div>
+  <!-- Live rate banner -->
+  <div class="card" id="rate-card" style="border-color:rgba(74,144,217,0.35);margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:4px;" id="rate-source-label">🔄 載入即時匯率中…</div>
+        <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;">
+          <span style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--sakura);" id="rate-big">—</span>
+          <span style="font-size:0.8rem;color:var(--text-dim);">NT$ / ¥100</span>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:4px;" id="rate-reverse-label">NT$1 ≈ ¥— </div>
+      </div>
+      <div style="text-align:right;">
+        <button class="btn btn-sky" style="font-size:0.72rem;padding:7px 12px;" onclick="loadLiveRate()">🔄 更新匯率</button>
+        <div style="font-size:0.62rem;color:rgba(250,248,243,0.3);margin-top:5px;" id="rate-updated-at">—</div>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-val" style="font-size:1.3rem;">NT$1</div>
-      <div class="stat-lbl">≈ ¥<span id="rate-display2">4.50</span></div>
-      <div style="font-size:0.65rem;color:rgba(250,248,243,0.3);margin-top:3px;">TWD→JPY</div>
+    <!-- Visa fee breakdown -->
+    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+      <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:8px 4px;">
+        <div style="font-size:0.85rem;color:#7bbfef;font-weight:600;" id="rate-ecb">—</div>
+        <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">央行牌告匯率</div>
+      </div>
+      <div style="background:rgba(244,167,185,0.08);border:1px solid rgba(244,167,185,0.2);border-radius:10px;padding:8px 4px;">
+        <div style="font-size:0.85rem;color:var(--sakura);font-weight:700;" id="rate-visa">—</div>
+        <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">Visa 刷卡估算</div>
+      </div>
+      <div style="background:rgba(201,168,76,0.08);border-radius:10px;padding:8px 4px;">
+        <div style="font-size:0.85rem;color:var(--gold);font-weight:600;" id="rate-cash">—</div>
+        <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">現金兌換參考</div>
+      </div>
+    </div>
+    <div class="tip" style="margin-top:10px;font-size:0.7rem;">
+      <strong>💳 Visa 匯率說明：</strong>央行牌告 + 約 1.5% 國際手續費估算。實際匯率以當日 Visa 官網為準。<br>
+      建議直接在日本以<strong>日圓</strong>付款，避免 DCC 動態貨幣換算（通常更貴）。
     </div>
   </div>
 
@@ -1002,10 +1059,10 @@ body::before {
     <div class="card-title">⛽ 油費試算</div>
     <div class="drive-cards" style="margin-bottom:10px;">
       <div class="stat-card"><div class="stat-val">700</div><div class="stat-lbl">預估 km</div></div>
-      <div class="stat-card"><div class="stat-val" id="fuel-jpy">¥8,167</div><div class="stat-lbl">油費(円)</div></div>
-      <div class="stat-card"><div class="stat-val" id="fuel-twd">NT$1,813</div><div class="stat-lbl">台幣</div></div>
+      <div class="stat-card"><div class="stat-val" id="fuel-jpy">計算中</div><div class="stat-lbl">油費(円)</div></div>
+      <div class="stat-card"><div class="stat-val" id="fuel-twd">計算中</div><div class="stat-lbl">台幣</div></div>
     </div>
-    <div class="tip"><strong>計算基準：</strong>油耗15km/L・油價¥175/L。高速費另計約 ¥6,000–8,000（約 NT$1,332–1,776）。</div>
+    <div class="tip"><strong>計算基準：</strong>油耗15km/L・油價¥175/L。高速費另計約 ¥6,000–8,000。</div>
   </div>
 </div>
 
@@ -1194,52 +1251,46 @@ body::before {
   </div>
 
   <div class="card" style="border-color:rgba(244,167,185,0.25);">
-    <div class="card-title">📷 拍照翻譯菜單</div>
+    <div class="card-title">📷 拍照翻譯菜單 <span class="badge badge-sakura">支援多張</span></div>
     <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px;line-height:1.6;">
-      拍下菜單照片，Gemini AI 自動辨識日文菜名並翻譯成中文，附上價格換算。<br>
+      可一次選多張菜單照片，AI 逐張辨識後合併結果。<br>
       勾選想要的菜色，直接出示給店員看！
     </div>
 
-    <!-- Upload area: two explicit buttons so iOS shows correct picker each time -->
+    <!-- Upload buttons -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <!-- 📷 直接拍照 -->
       <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
                     background:rgba(244,167,185,0.07);border:1.5px dashed rgba(244,167,185,0.45);
-                    border-radius:18px;padding:24px 12px;cursor:pointer;transition:all 0.22s;text-align:center;"
-             onmouseover="this.style.background='rgba(244,167,185,0.13)'" 
+                    border-radius:18px;padding:20px 12px;cursor:pointer;transition:all 0.22s;text-align:center;"
+             onmouseover="this.style.background='rgba(244,167,185,0.13)'"
              onmouseout="this.style.background='rgba(244,167,185,0.07)'">
-        <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleMenuPhoto(event)">
-        <span style="font-size:2.2rem;">📷</span>
+        <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addMenuPhotos(event)">
+        <span style="font-size:2rem;">📷</span>
         <span style="font-size:0.82rem;color:var(--sakura);font-weight:600;">直接拍照</span>
-        <span style="font-size:0.68rem;color:var(--text-dim);">開啟相機拍菜單</span>
+        <span style="font-size:0.65rem;color:var(--text-dim);">拍完可繼續加</span>
       </label>
-      <!-- 🖼️ 從相簿選取 -->
       <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
                     background:rgba(123,94,167,0.08);border:1.5px dashed rgba(123,94,167,0.45);
-                    border-radius:18px;padding:24px 12px;cursor:pointer;transition:all 0.22s;text-align:center;"
+                    border-radius:18px;padding:20px 12px;cursor:pointer;transition:all 0.22s;text-align:center;"
              onmouseover="this.style.background='rgba(123,94,167,0.15)'"
              onmouseout="this.style.background='rgba(123,94,167,0.08)'">
-        <input type="file" accept="image/*" style="display:none;" onchange="handleMenuPhoto(event)">
-        <span style="font-size:2.2rem;">🖼️</span>
+        <input type="file" accept="image/*" multiple style="display:none;" onchange="addMenuPhotos(event)">
+        <span style="font-size:2rem;">🖼️</span>
         <span style="font-size:0.82rem;color:#b09fd4;font-weight:600;">從相簿選取</span>
-        <span style="font-size:0.68rem;color:var(--text-dim);">選擇已拍好的照片</span>
+        <span style="font-size:0.65rem;color:var(--text-dim);">可一次選多張</span>
       </label>
     </div>
 
-    <!-- Preview -->
-    <div id="photo-preview-wrap" style="display:none;margin-top:14px;">
-      <div class="preview-wrap">
-        <img id="photo-preview" src="" alt="菜單預覽">
-        <div class="preview-overlay">
-          <button class="btn btn-danger" style="padding:6px 10px;font-size:0.7rem;" onclick="clearPhoto()">✕ 清除</button>
-          <label class="btn btn-sky" style="padding:6px 10px;font-size:0.7rem;cursor:pointer;">
-            🔄 換圖
-            <input type="file" accept="image/*" style="display:none;" onchange="handleMenuPhoto(event)">
-          </label>
-        </div>
+    <!-- Multi-photo queue -->
+    <div id="photo-queue-wrap" style="display:none;margin-top:14px;">
+      <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+        <span>📋 已加入 <strong id="photo-count" style="color:var(--sakura);">0</strong> 張</span>
+        <button class="btn btn-danger" style="padding:4px 10px;font-size:0.7rem;" onclick="clearAllPhotos()">✕ 全部清除</button>
       </div>
-      <button class="btn btn-primary btn-full" id="scan-btn" onclick="scanMenu()" style="margin-top:4px;">
-        🤖 AI 分析菜單
+      <!-- Thumbnail strip -->
+      <div id="photo-thumbs" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;"></div>
+      <button class="btn btn-primary btn-full" id="scan-btn" onclick="scanAllMenus()" style="margin-top:10px;">
+        🤖 AI 分析全部菜單
       </button>
     </div>
   </div>
@@ -1311,6 +1362,87 @@ body::before {
   <button class="showcard-close" onclick="closeShowcard()">✕ 關閉點餐單（返回 App）</button>
 </div>
 
+
+<!-- SHOPPING PANEL -->
+<div id="panel-shopping" class="panel">
+  <div class="section-label">購物清單 · AI 查詢售價</div>
+
+  <!-- Summary -->
+  <div class="shop-summary">
+    <div>
+      <div style="font-size:0.68rem;color:var(--text-dim);">預估合計（Visa匯率）</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);" id="shop-ttwd">NT$0</div>
+      <div style="font-size:0.67rem;color:var(--text-dim);" id="shop-tjpy">¥0</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:0.68rem;color:var(--text-dim);">已購 / 全部</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--sakura);" id="shop-prog">0 / 0</div>
+    </div>
+  </div>
+
+  <!-- Add form -->
+  <div class="add-form">
+    <div class="card-title" style="margin-bottom:12px;">➕ 新增商品</div>
+    <div class="input-wrap" style="margin-bottom:8px;">
+      <label>商品名稱</label>
+      <input type="text" id="si-name" placeholder="例：資生堂防曬乳"
+        style="text-align:left;font-family:'Noto Sans TC',sans-serif;font-size:0.88rem;"
+        onkeydown="if(event.key==='Enter')addShopItem(false)">
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <div class="input-wrap" style="flex:1;margin-bottom:0;">
+        <label>數量</label>
+        <input type="number" id="si-qty" value="1" min="1" style="text-align:right;">
+      </div>
+      <select id="si-cat" class="cat-sel" style="flex:1.5;">
+        <option value="藥妝">💊 藥妝</option>
+        <option value="食品">🍡 食品</option>
+        <option value="電器">📱 電器</option>
+        <option value="服飾">👗 服飾</option>
+        <option value="保養品">✨ 保養品</option>
+        <option value="伴手禮">🎁 伴手禮</option>
+        <option value="其他">📦 其他</option>
+      </select>
+    </div>
+    <div class="input-wrap" style="margin-bottom:10px;">
+      <label>預算(円)</label>
+      <input type="number" id="si-budget" placeholder="0（選填）" style="text-align:right;">
+      <span class="tag">¥</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="flex:2;" onclick="addShopItem(false)">➕ 加入清單</button>
+      <button class="btn btn-gold" style="flex:1.2;font-size:0.75rem;" onclick="addShopItem(true)">➕ 加入並查價</button>
+    </div>
+  </div>
+
+  <!-- Filter chips -->
+  <div class="chip-row">
+    <div class="chip active" onclick="shopFilter('all',this)">全部</div>
+    <div class="chip" onclick="shopFilter('未購',this)">⬜ 未購</div>
+    <div class="chip" onclick="shopFilter('已購',this)">✅ 已購</div>
+    <div class="chip" onclick="shopFilter('藥妝',this)">💊 藥妝</div>
+    <div class="chip" onclick="shopFilter('食品',this)">🍡 食品</div>
+    <div class="chip" onclick="shopFilter('電器',this)">📱 電器</div>
+    <div class="chip" onclick="shopFilter('保養品',this)">✨ 保養品</div>
+    <div class="chip" onclick="shopFilter('伴手禮',this)">🎁 伴手禮</div>
+  </div>
+
+  <!-- List container -->
+  <div id="shop-list"></div>
+
+  <!-- Batch actions -->
+  <div id="shop-batch" style="display:none;display:flex;gap:8px;margin-top:6px;">
+    <button class="btn btn-sky" style="flex:1;font-size:0.74rem;" onclick="queryAllPrices()">🤖 批次查詢全部售價</button>
+    <button class="btn btn-danger" style="font-size:0.74rem;padding:10px 12px;" onclick="clearBought()">🗑 清除已購</button>
+  </div>
+
+  <!-- Hotlist -->
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">⭐ 日本必買常見商品（點一下加入）</div>
+    <div id="hotlist" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="switchPanel('home')">
@@ -1334,6 +1466,9 @@ body::before {
   <button class="nav-item" onclick="switchPanel('phrases')">
     <span class="nav-icon">🗣️</span><span class="nav-label">日文</span>
   </button>
+  <button class="nav-item" onclick="switchPanel('shopping')">
+    <span class="nav-icon">🛒</span><span class="nav-label">購物</span>
+  </button>
   <button class="nav-item" onclick="switchPanel('itinerary')">
     <span class="nav-icon">📅</span><span class="nav-label">行程</span>
   </button>
@@ -1346,7 +1481,9 @@ body::before {
 // ═══════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════
-const JPY_TWD = 0.222;
+let JPY_TWD = 0.222; // updated dynamically from live rate
+let JPY_TWD_VISA = 0.225; // Visa estimate (+1.5%)
+let JPY_TWD_CASH = 0.220; // cash exchange reference
 
 const restaurants = [
   {
@@ -1579,10 +1716,11 @@ const quickItems = [
 const itinerary = [
   { day:'Day 1', date:'5/07(週四)', title:'成田抵達 → 鹿島神宮 → 大洗',
     items:[
-      {t:'11:15',s:'✈️ 抵達成田機場，辦理入境手續',drive:''},
-      {t:'12:15',s:'🍱 午餐：川豐（第一航廈4F）江戶前鰻魚飯',drive:''},
-      {t:'13:30',s:'🚗 辦理租車，出發往北',drive:'成田→鹿島神宮 約75分'},
-      {t:'15:00',s:'⛩️ 景點：鹿島神宮 — 古老森林參道',drive:'鹿島→大洗 約50分'},
+      {t:'08:25',s:'✈️ <strong>長榮航空 BR 189</strong> 起飛<br>🛫 桃園國際機場 T2（TPE）→ 成田國際機場 T1（NRT）',drive:''},
+      {t:'12:35',s:'🛬 <strong>抵達成田機場 第一航廈（T1）</strong><br>入境審查 → 行李提領 → 海關',drive:''},
+      {t:'13:30',s:'🍱 午餐：川豐（成田機場第一航廈4F）江戶前鰻魚飯',drive:''},
+      {t:'14:30',s:'🚗 辦理租車，出發往北',drive:'成田→鹿島神宮 約75分'},
+      {t:'16:00',s:'⛩️ 鹿島神宮 — 古老森林參道',drive:'鹿島→大洗 約50分'},
       {t:'17:30',s:'🏨 入住：龜之井飯店 大洗',drive:''},
     ]},
   { day:'Day 2', date:'5/08(週五)', title:'水族館 → 魚市場 → 粉蝶花海',
@@ -1617,10 +1755,12 @@ const itinerary = [
     ]},
   { day:'Day 6', date:'5/12(週二)', title:'歸途 — 成田機場',
     items:[
-      {t:'08:30',s:'☕ 飯店悠閒早餐',drive:''},
-      {t:'09:30',s:'🚗 出發成田機場',drive:'土浦→成田 約60分'},
-      {t:'10:30',s:'🚗 準時還車，辦理登機',drive:''},
-      {t:'13:25',s:'✈️ 長榮航空 BR 183 起飛返台',drive:''},
+      {t:'08:30',s:'☕ 飯店悠閒早餐，整理行裝',drive:''},
+      {t:'09:30',s:'🚗 出發前往成田機場',drive:'土浦→成田 約60分'},
+      {t:'10:30',s:'🚗 租車還車 → 機場接駁至航廈',drive:''},
+      {t:'11:00',s:'🛫 <strong>成田機場 第一航廈（T1）</strong>辦理登機',drive:''},
+      {t:'13:25',s:'✈️ <strong>長榮航空 BR 183</strong> 起飛<br>🛫 NRT T1 → 桃園 T2（TPE）',drive:''},
+      {t:'15:40',s:'🛬 <strong>抵達桃園機場 T2</strong>（預計）提領行李・回家 🎉',drive:''},
     ]},
 ];
 
@@ -1658,7 +1798,7 @@ function copyOrder() {
   const lines = cart.map(c=>`・${c.name} ¥${c.price}`).join('\n');
   const total = cart.reduce((a,b)=>a+b.price,0);
   const text = `【點單】\n${lines}\n合計：¥${total.toLocaleString()}`;
-  navigator.clipboard?.writeText(text).then(()=>showToast('點單已複製！'));
+  (navigator.clipboard ? navigator.clipboard.writeText(text).then(function(){showToast('點單已複製！');}) : showToast('點單已複製！'));
 }
 
 // ═══════════════════════════════════════════
@@ -1848,9 +1988,60 @@ function getGPS() {
 }
 
 // ═══════════════════════════════════════════
-// CURRENCY
+// CURRENCY — LIVE RATE (Frankfurter / ECB)
 // ═══════════════════════════════════════════
 let curDir = 'j2t';
+let rateLoaded = false;
+
+async function loadLiveRate() {
+  const btn = document.querySelector('[onclick="loadLiveRate()"]');
+  if(btn) { btn.textContent = '🔄 更新中…'; btn.disabled = true; }
+  try {
+    // Frankfurter API: ECB rates, free, no key, CORS-friendly
+    const res = await fetch('https://api.frankfurter.app/latest?from=JPY&to=TWD');
+    if(!res.ok) throw new Error('network');
+    const data = await res.json();
+    const ecbRate = data.rates.TWD; // TWD per 1 JPY
+    const ecbPer100 = +(ecbRate * 100).toFixed(3);
+    const visaPer100 = +(ecbPer100 * 1.015).toFixed(3); // +1.5% Visa fee estimate
+    const cashPer100 = +(ecbPer100 * 0.98).toFixed(3);  // -2% cash spread
+
+    // Update globals (per 1 JPY)
+    JPY_TWD      = +ecbRate.toFixed(5);
+    JPY_TWD_VISA = +(ecbRate * 1.015).toFixed(5);
+    JPY_TWD_CASH = +(ecbRate * 0.98).toFixed(5);
+
+    // Update UI
+    document.getElementById('rate-big').textContent = visaPer100.toFixed(2);
+    document.getElementById('rate-reverse-label').textContent = `NT$1 ≈ ¥${(1/JPY_TWD_VISA).toFixed(2)}`;
+    document.getElementById('rate-ecb').textContent   = ecbPer100.toFixed(2);
+    document.getElementById('rate-visa').textContent  = visaPer100.toFixed(2);
+    document.getElementById('rate-cash').textContent  = cashPer100.toFixed(2);
+    const now = new Date();
+    document.getElementById('rate-source-label').textContent = `✅ 歐洲央行即時匯率（Visa 估算含1.5%手續費）`;
+    document.getElementById('rate-updated-at').textContent = `更新：${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    // Recalc if something is typed
+    calcCurrency();
+    updateFuelCalc();
+    renderQuick();
+    rateLoaded = true;
+  } catch(e) {
+    document.getElementById('rate-source-label').textContent = '⚠️ 無法取得即時匯率，使用預設值';
+    document.getElementById('rate-big').textContent = (JPY_TWD_VISA*100).toFixed(2);
+    document.getElementById('rate-ecb').textContent  = (JPY_TWD*100).toFixed(2);
+    document.getElementById('rate-visa').textContent = (JPY_TWD_VISA*100).toFixed(2);
+    document.getElementById('rate-cash').textContent = (JPY_TWD_CASH*100).toFixed(2);
+    document.getElementById('rate-reverse-label').textContent = `NT$1 ≈ ¥${(1/JPY_TWD_VISA).toFixed(2)}`;
+  }
+  if(btn) { btn.textContent = '🔄 更新匯率'; btn.disabled = false; }
+}
+
+function updateFuelCalc() {
+  const fuelJpy = Math.round(700/15*175);
+  document.getElementById('fuel-jpy').textContent = `¥${fuelJpy.toLocaleString()}`;
+  document.getElementById('fuel-twd').textContent = `NT$${Math.round(fuelJpy*JPY_TWD_VISA).toLocaleString()}`;
+}
 
 function setDir(dir) {
   curDir = dir;
@@ -1865,23 +2056,29 @@ function setDir(dir) {
 
 function calcCurrency() {
   const v = parseFloat(document.getElementById('cur-input').value) || 0;
+  if(!v) return;
+  const rate = JPY_TWD_VISA; // use Visa rate for display
   if(curDir==='j2t') {
-    const r = Math.round(v*JPY_TWD);
-    document.getElementById('cur-result').textContent = `NT$ ${r.toLocaleString()}`;
-    document.getElementById('cur-sub').textContent = `¥${v.toLocaleString()} × ${JPY_TWD} = NT$${r}`;
+    const r = (v * rate).toFixed(0);
+    document.getElementById('cur-result').textContent = `NT$ ${Number(r).toLocaleString()}`;
+    document.getElementById('cur-sub').textContent =
+      `¥${v.toLocaleString()} × ${(rate*100).toFixed(3)}（Visa估算）= NT$${r}`;
   } else {
-    const r = Math.round(v/JPY_TWD);
+    const r = Math.round(v / rate);
     document.getElementById('cur-result').textContent = `¥ ${r.toLocaleString()}`;
-    document.getElementById('cur-sub').textContent = `NT$${v.toLocaleString()} ÷ ${JPY_TWD} = ¥${r}`;
+    document.getElementById('cur-sub').textContent =
+      `NT$${v.toLocaleString()} ÷ ${(rate*100).toFixed(3)} = ¥${r}`;
   }
 }
 
 function renderQuick() {
+  const rate = JPY_TWD_VISA;
   document.getElementById('quick-grid').innerHTML = quickItems.map(q=>`
     <div class="quick-btn" onclick="fillAmount(${q.jpy})">
       <div class="quick-name">${q.name}</div>
       <div class="quick-price">¥${q.jpy.toLocaleString()}</div>
-      <div style="font-size:0.65rem;color:rgba(250,248,243,0.3);">${q.note}</div>
+      <div style="font-size:0.68rem;color:var(--gold);">≈NT$${Math.round(q.jpy*rate)}</div>
+      <div style="font-size:0.6rem;color:rgba(250,248,243,0.3);">${q.note}</div>
     </div>
   `).join('');
 }
@@ -1929,13 +2126,13 @@ function toggleDay(idx) {
 // PHRASES
 // ═══════════════════════════════════════════
 function copyPhrase(text, label) {
-  navigator.clipboard?.writeText(text).then(()=>showToast(label||'已複製！'));
+  (navigator.clipboard ? navigator.clipboard.writeText(text).then(function(){showToast(label||'已複製！');}) : showToast(label||'已複製！'));
 }
 
 // ═══════════════════════════════════════════
 // NAV & PANELS
 // ═══════════════════════════════════════════
-const panels = ['home','weather','restaurants','camera','map','currency','phrases','itinerary'];
+const panels = ['home','weather','restaurants','camera','map','currency','phrases','shopping','itinerary'];
 
 function switchPanel(id) {
   panels.forEach(p => {
@@ -2046,8 +2243,8 @@ async function loadWeather(locKey, chipEl) {
         tempMin: Math.round(json.daily.temperature_2m_min[di]),
         rain: json.daily.precipitation_probability_max[di] || 0,
         wind: Math.round(json.daily.windspeed_10m_max[di]),
-        sunrise: json.daily.sunrise[di]?.slice(11) || '--',
-        sunset:  json.daily.sunset[di]?.slice(11) || '--',
+        sunrise: (json.daily.sunrise[di] ? json.daily.sunrise[di].slice(11) : '--') || '--',
+        sunset:  (json.daily.sunset[di] ? json.daily.sunset[di].slice(11) : '--') || '--',
         code,
       };
     }).filter(Boolean);
@@ -2066,7 +2263,7 @@ async function loadWeather(locKey, chipEl) {
     renderCurrentWeather(fallback[0], loc.name);
     renderWeatherStrip(fallback);
     document.getElementById('wx-packing').innerHTML = wxPackingTips(fallback);
-    document.getElementById('wx-current-card').querySelector('.wx-loading')?.remove();
+    (function(){var el=document.getElementById('wx-current-card').querySelector('.wx-loading');if(el)el.remove();})();
     wxLoaded = true;
   }
 }
@@ -2216,16 +2413,17 @@ renderItinerary();
 populateSelects();
 setTodayHighlight();
 
-// Auto-load weather for home page mini display
+// Auto-load weather
 loadWeather('oarai', null);
 
-// Load saved API key state
+// Load API key state
 loadApiKeyState();
 
-// Fuel calc
-const fuelJpy = Math.round(700/15*175);
-document.getElementById('fuel-jpy').textContent = `¥${fuelJpy.toLocaleString()}`;
-document.getElementById('fuel-twd').textContent = `NT$${Math.round(fuelJpy*JPY_TWD).toLocaleString()}`;
+// Load live exchange rate
+loadLiveRate();
+
+
+// Fuel calc handled by updateFuelCalc() after rate loads
 
 // ═══════════════════════════════════════════
 // API KEY MANAGEMENT
@@ -2279,7 +2477,7 @@ async function testApiKey() {
     );
     const d = await r.json();
     if(d.candidates) res.innerHTML = '<span style="color:#7ec89a;">✅ 連線成功！Gemini 已就緒</span>';
-    else res.innerHTML = `<span style="color:#f08080;">❌ ${d.error?.message||'連線失敗'}</span>`;
+    else res.innerHTML = `<span style="color:#f08080;">❌ ${(d.error ? d.error.message : '連線失敗')||'連線失敗'}</span>`;
   } catch(e) {
     res.innerHTML = `<span style="color:#f08080;">❌ 網路錯誤：${e.message}</span>`;
   }
@@ -2299,149 +2497,127 @@ function getApiKey() {
 // ═══════════════════════════════════════════
 // CAMERA / MENU SCAN
 // ═══════════════════════════════════════════
-let currentPhotoBase64 = null;
-let currentPhotoMime = 'image/jpeg';
+// Multi-photo queue
+let photoQueue = []; // [{base64, mime, name, thumb}]
 let scannedItems = [];
 let cameraCart = [];
 
-function handleMenuPhoto(event) {
-  const file = event.target.files[0];
-  if(!file) return;
-  currentPhotoMime = file.type || 'image/jpeg';
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const dataUrl = e.target.result;
-    currentPhotoBase64 = dataUrl.split(',')[1];
-    document.getElementById('photo-preview').src = dataUrl;
-    document.getElementById('photo-preview-wrap').style.display = 'block';
-    document.getElementById('scan-result-area').style.display = 'none';
-    scannedItems = [];
-    selectedScanIdx.clear();
-  };
-  reader.readAsDataURL(file);
+function addMenuPhotos(event) {
+  const files = Array.from(event.target.files);
+  if(!files.length) return;
+  let loaded = 0;
+  files.forEach(file => {
+    const mime = file.type || 'image/jpeg';
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      photoQueue.push({ base64: dataUrl.split(',')[1], mime, name: file.name, thumb: dataUrl });
+      loaded++;
+      if(loaded === files.length) renderPhotoQueue();
+    };
+    reader.readAsDataURL(file);
+  });
+  event.target.value = ''; // reset so same file can be added again
 }
 
-function clearPhoto() {
-  currentPhotoBase64 = null;
-  document.getElementById('photo-preview-wrap').style.display = 'none';
+function renderPhotoQueue() {
+  const wrap = document.getElementById('photo-queue-wrap');
+  const thumbs = document.getElementById('photo-thumbs');
+  const count = document.getElementById('photo-count');
+  if(!photoQueue.length) { wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+  count.textContent = photoQueue.length;
+  thumbs.innerHTML = photoQueue.map((p,i) => `
+    <div style="position:relative;flex-shrink:0;">
+      <img src="${p.thumb}" style="width:70px;height:70px;object-fit:cover;border-radius:10px;border:2px solid rgba(244,167,185,0.4);">
+      <button onclick="removePhoto(${i})" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--danger);border:none;color:white;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <div style="font-size:0.55rem;color:var(--text-dim);text-align:center;margin-top:2px;max-width:70px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${p.name||'圖片'+(i+1)}</div>
+    </div>
+  `).join('');
   document.getElementById('scan-result-area').style.display = 'none';
+}
+
+function removePhoto(i) {
+  photoQueue.splice(i,1);
+  renderPhotoQueue();
+}
+
+function clearAllPhotos() {
+  photoQueue = [];
   scannedItems = [];
   selectedScanIdx.clear();
+  renderPhotoQueue();
+  document.getElementById('scan-result-area').style.display = 'none';
 }
 
-async function scanMenu() {
-  if(!currentPhotoBase64) { showToast('請先上傳菜單照片'); return; }
+// Legacy single-photo compat
+function handleMenuPhoto(event) { addMenuPhotos(event); }
+function clearPhoto() { clearAllPhotos(); }
+
+async function scanAllMenus() {
+  if(!photoQueue.length) { showToast('請先上傳菜單照片'); return; }
   const key = getApiKey();
   if(!key) return;
-
   const btn = document.getElementById('scan-btn');
+  const total = photoQueue.length;
   btn.disabled = true;
-  btn.innerHTML = '<div class="ai-thinking"><span>🤖 Gemini AI 分析中</span><div class="ai-dots"><span></span><span></span><span></span></div></div>';
+  document.getElementById('scan-result-area').style.display = 'block';
 
-  const resultArea = document.getElementById('scan-result-area');
-  resultArea.style.display = 'block';
-  document.getElementById('scan-items-list').innerHTML = `
-    <div class="ai-thinking" style="padding:20px;justify-content:center;">
-      <span>🔍 識別日文菜單中…</span>
-      <div class="ai-dots"><span></span><span></span><span></span></div>
-    </div>`;
+  const PROMPT = `你是專業的日本餐廳菜單翻譯助理，精通繁體中文。分析菜單圖片，找出所有菜品。只回傳JSON（無markdown）：{"items":[{"jp":"日文原文","zh":"繁體中文","price":數字或null,"note":"說明20字內","kids_ok":true或false,"is_raw":true或false}],"restaurant_type":"餐廳類型","notes":"備注"}。kids_ok=4-7歲適合；is_raw=含生食；price=圖片中日圓數字或null`;
 
-  const prompt = `你是專業的日本餐廳菜單翻譯助理，精通繁體中文。
-
-請仔細分析這張菜單圖片，找出所有菜品。
-
-只回傳JSON（不要加任何說明或markdown）：
-{
-  "items": [
-    {
-      "jp": "日文原文菜名",
-      "zh": "繁體中文翻譯",
-      "price": 數字或null,
-      "note": "簡短說明（食材口感20字內）",
-      "kids_ok": true或false,
-      "is_raw": true或false
-    }
-  ],
-  "restaurant_type": "餐廳類型",
-  "notes": "備注"
-}
-
-規則：
-- kids_ok：適合4-7歲兒童（熟食、不辣、非生食）
-- is_raw：包含生魚片等生食
-- price：從圖片提取日圓價格數字，看不到則null
-- 圖片不清晰也盡力辨識`;
-
-  try {
-    const response = await fetch(
+  async function callGeminiOnce(b64, mime) {
+    const resp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      { method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
-          contents: [{
-            parts: [
-              { inline_data: { mime_type: currentPhotoMime, data: currentPhotoBase64 } },
-              { text: prompt }
-            ]
-          }],
-          generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
+          contents:[{parts:[{inline_data:{mime_type:mime,data:b64}},{text:PROMPT}]}],
+          generationConfig:{temperature:0.1,maxOutputTokens:8192}
         })
       }
     );
-
-    const data = await response.json();
-
-    if(data.error) throw new Error(data.error.message);
-
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const clean = text.replace(/```json|```/gi, '').trim();
-    const jsonStart = clean.indexOf('{');
-    if(jsonStart === -1) throw new Error('無法解析回應，請重試');
-    let jsonStr = clean.slice(jsonStart);
-    let parsed;
-    try {
-      parsed = JSON.parse(jsonStr);
-    } catch(e) {
-      const lastBrace = jsonStr.lastIndexOf('}');
-      if(lastBrace < 0) throw new Error('回應格式錯誤，請重試');
-      let fixed = jsonStr.slice(0, lastBrace + 1);
-      const openArr = (fixed.match(/\[/g)||[]).length - (fixed.match(/\]/g)||[]).length;
-      const openObj = (fixed.match(/\{/g)||[]).length - (fixed.match(/\}/g)||[]).length;
-      for(let i = 0; i < openObj; i++) fixed += '}';
-      for(let i = 0; i < openArr; i++) fixed += ']';
-      fixed += '}';
-      try {
-        parsed = JSON.parse(fixed);
-        parsed._truncated = true;
-      } catch(e2) {
-        throw new Error('菜單太長無法完整解析，請分上下兩段拍照');
-      }
+    const d = await resp.json();
+    if(d.error) throw new Error(d.error.message);
+    const txt = (d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0] ? d.candidates[0].content.parts[0].text : '')||'';
+    const clean = txt.replace(/```json|```/gi,'').trim();
+    const js = clean.slice(clean.indexOf('{'));
+    try { return JSON.parse(js); }
+    catch(e) {
+      const lb=js.lastIndexOf('}'); if(lb<0) throw new Error('格式錯誤');
+      let fx=js.slice(0,lb+1);
+      const oa=(fx.match(/\[/g)||[]).length-(fx.match(/\]/g)||[]).length;
+      const oo=(fx.match(/\{/g)||[]).length-(fx.match(/\}/g)||[]).length;
+      for(let i=0;i<oo;i++) fx+='}'; for(let i=0;i<oa;i++) fx+=']'; fx+='}';
+      const p=JSON.parse(fx); p._truncated=true; return p;
     }
-    scannedItems = parsed.items || [];
-    if(parsed._truncated && scannedItems.length) {
-      parsed._notice = '菜單較長，已識別前 ' + scannedItems.length + ' 項。如需完整翻譯請分段拍照。';
-    }
-    renderScanResults(parsed);
-
-  } catch(err) {
-    let errMsg = err.message;
-    if(errMsg.includes('API_KEY_INVALID') || errMsg.includes('400')) errMsg = 'API Key 無效，請重新設定';
-    if(errMsg.includes('429')) errMsg = '超過免費限額，請稍後再試（每分鐘15次）';
-    document.getElementById('scan-items-list').innerHTML = `
-      <div class="err-box">
-        ⚠️ 分析失敗：${errMsg}<br><br>
-        可能原因：<br>
-        • 圖片太模糊或光線不足<br>
-        • API Key 有誤（點上方「測試連線」確認）<br>
-        • 超過每日免費額度（250次/天）<br>
-        • 網路問題
-      </div>`;
   }
 
-  btn.disabled = false;
-  btn.innerHTML = '🤖 重新分析菜單';
+  let allItems=[], restType='';
+  try {
+    for(let qi=0; qi<total; qi++) {
+      const photo=photoQueue[qi];
+      btn.innerHTML=`<div class="ai-thinking"><span>🤖 第${qi+1}/${total}張分析中…</span><div class="ai-dots"><span></span><span></span><span></span></div></div>`;
+      document.getElementById('scan-items-list').innerHTML=`<div class="ai-thinking" style="padding:20px;justify-content:center;"><span>📷 第${qi+1}/${total}張識別中…</span><div class="ai-dots"><span></span><span></span><span></span></div></div>`;
+      const parsed=await callGeminiOnce(photo.base64, photo.mime);
+      if(parsed.restaurant_type&&!restType) restType=parsed.restaurant_type;
+      if(parsed.items) allItems=allItems.concat(parsed.items);
+    }
+    const seen=new Set();
+    allItems=allItems.filter(it=>{ if(seen.has(it.jp)) return false; seen.add(it.jp); return true; });
+    scannedItems=allItems;
+    const merged={items:allItems, restaurant_type:restType,
+      _notice: total>1 ? `已合併 ${total} 張菜單，共識別 ${allItems.length} 道菜` : ''};
+    renderScanResults(merged);
+  } catch(err) {
+    let msg=err.message;
+    if(msg.includes('API_KEY_INVALID')||msg.includes('400')) msg='API Key 無效，請重新設定';
+    if(msg.includes('429')) msg='超過免費限額，請稍後再試（每分鐘15次）';
+    document.getElementById('scan-items-list').innerHTML=`<div class="err-box">⚠️ 分析失敗：${msg}<br><br>• 圖片太模糊或光線不足<br>• API Key 有誤<br>• 超過每日免費額度</div>`;
+  }
+  btn.disabled=false;
+  btn.innerHTML=`🤖 ${total>1?'重新分析全部菜單':'重新分析菜單'}`;
 }
+async function scanMenu() { await scanAllMenus(); }
+
 
 function renderScanResults(parsed) {
   const list = document.getElementById('scan-items-list');
@@ -2608,7 +2784,7 @@ async function translateManual() {
     );
     const d = await r.json();
     if(d.error) throw new Error(d.error.message);
-    const text = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const text = (d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0] ? d.candidates[0].content.parts[0].text : '') || '';
     const clean = text.replace(/```json|```/g,'').trim();
     const match = clean.match(/\{[\s\S]*\}/);
     const parsed = match ? JSON.parse(match[0]) : { zh:'翻譯失敗', note:'', kids_ok:false, is_raw:false };
@@ -2638,6 +2814,302 @@ function addManualToCart(jp, zh, price) {
   renderCameraCart();
   showToast(`✅ 已加入：${jp}`);
 }
+
+// ═══════════════════════════════════════════
+// SHOPPING LIST
+// ═══════════════════════════════════════════
+let shopList = JSON.parse(localStorage.getItem('shopList') || '[]');
+let shopFilterVal = 'all';
+
+const CAT_ICON = {'藥妝':'💊','食品':'🍡','電器':'📱','服飾':'👗','保養品':'✨','伴手禮':'🎁','其他':'📦'};
+
+const HOTLIST = [
+  ['資生堂蜂蜜洗面乳','保養品'],['肌研極潤化妝水','保養品'],['MINON氨基酸化妝水','保養品'],
+  ['龍角散喉糖','藥妝'],['小林製藥熱敷眼罩','藥妝'],['EVE止痛藥','藥妝'],['正官庄高麗蔘','藥妝'],
+  ['東京香蕉蛋糕','伴手禮'],['白色戀人餅乾','伴手禮'],['草莓朱古力','食品'],
+  ['松露洋芋片','食品'],['山崎麵包','食品'],['象印保溫瓶','電器'],['無印良品護膚品','保養品'],
+  ['Pigeon嬰兒洗衣精','藥妝'],['資生堂防曬乳SPF50','保養品'],['KOSE高絲洗顏泡沫','保養品'],
+  ['DHC橄欖深層卸妝油','保養品'],['布丁造型甜點','食品'],['百靈電動牙刷','電器']
+];
+
+function saveShop() {
+  localStorage.setItem('shopList', JSON.stringify(shopList));
+}
+
+function addShopItem(doQuery) {
+  const name = document.getElementById('si-name').value.trim();
+  if (!name) { showToast('請輸入商品名稱'); return; }
+  const qty    = parseInt(document.getElementById('si-qty').value) || 1;
+  const cat    = document.getElementById('si-cat').value;
+  const budget = parseInt(document.getElementById('si-budget').value) || 0;
+  const item = { id: Date.now(), name, qty, cat, budget, bought: false, pd: null, qing: false };
+  shopList.push(item);
+  saveShop();
+  document.getElementById('si-name').value = '';
+  document.getElementById('si-qty').value = '1';
+  document.getElementById('si-budget').value = '';
+  renderShop();
+  showToast('✅ 已加入：' + name + ' ×' + qty);
+  if (doQuery) queryPrice(item.id);
+}
+
+function hotAdd(name, cat) {
+  if (shopList.find(x => x.name === name)) { showToast(name + ' 已在清單中'); return; }
+  const item = { id: Date.now(), name, qty: 1, cat, budget: 0, bought: false, pd: null, qing: false };
+  shopList.push(item);
+  saveShop();
+  renderShop();
+  showToast('✅ ' + name + ' 已加入');
+}
+
+function toggleBought(id) {
+  const item = shopList.find(x => x.id === id);
+  if (!item) return;
+  item.bought = !item.bought;
+  saveShop();
+  renderShop();
+}
+
+function changeQty(id, d) {
+  const item = shopList.find(x => x.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + d);
+  saveShop();
+  renderShop();
+}
+
+function removeItem(id) {
+  shopList = shopList.filter(x => x.id !== id);
+  saveShop();
+  renderShop();
+}
+
+function clearBought() {
+  shopList = shopList.filter(x => !x.bought);
+  saveShop();
+  renderShop();
+  showToast('🗑 已清除已購商品');
+}
+
+function shopFilter(val, el) {
+  shopFilterVal = val;
+  document.querySelectorAll('#panel-shopping .chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderShop();
+}
+
+function buildItemEl(item) {
+  const div = document.createElement('div');
+  div.className = 'shop-item' + (item.bought ? ' bought' : '');
+  div.id = 'shi-' + item.id;
+
+  // Row 1: checkbox + name + qty
+  const row = document.createElement('div');
+  row.className = 'shop-row';
+
+  const chk = document.createElement('button');
+  chk.className = 'shop-chk' + (item.bought ? ' on' : '');
+  chk.textContent = item.bought ? '✓' : '';
+  chk.onclick = function() { toggleBought(item.id); };
+  row.appendChild(chk);
+
+  const nameWrap = document.createElement('div');
+  nameWrap.style.flex = '1';
+  const nameEl = document.createElement('div');
+  nameEl.className = 'shop-name-txt' + (item.bought ? ' struck' : '');
+  nameEl.textContent = (CAT_ICON[item.cat] || '📦') + ' ' + item.name;
+  const metaEl = document.createElement('div');
+  metaEl.className = 'shop-meta-txt';
+  metaEl.textContent = item.cat + (item.budget ? '  預算 ¥' + item.budget.toLocaleString() : '');
+  nameWrap.appendChild(nameEl);
+  nameWrap.appendChild(metaEl);
+  row.appendChild(nameWrap);
+
+  const qtyRow = document.createElement('div');
+  qtyRow.className = 'qty-row';
+  const bm = document.createElement('button');
+  bm.textContent = '−';
+  bm.onclick = function() { changeQty(item.id, -1); };
+  const qspan = document.createElement('span');
+  qspan.textContent = item.qty;
+  const bp = document.createElement('button');
+  bp.textContent = '+';
+  bp.onclick = function() { changeQty(item.id, 1); };
+  qtyRow.appendChild(bm); qtyRow.appendChild(qspan); qtyRow.appendChild(bp);
+  row.appendChild(qtyRow);
+
+  div.appendChild(row);
+
+  // Price info
+  if (item.qing) {
+    const box = document.createElement('div');
+    box.className = 'shop-ai-box';
+    box.innerHTML = '<div class="ai-thinking"><span>🤖 AI 查詢售價中…</span><div class="ai-dots"><span></span><span></span><span></span></div></div>';
+    div.appendChild(box);
+  } else if (item.pd) {
+    const box = document.createElement('div');
+    box.className = 'shop-ai-box';
+    const pills = document.createElement('div');
+    pills.style.cssText = 'display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px;';
+    if (item.pd.price_excl != null) {
+      const p1 = document.createElement('span');
+      p1.className = 'price-pill base';
+      p1.textContent = '🏷 未稅 ¥' + Number(item.pd.price_excl).toLocaleString();
+      pills.appendChild(p1);
+    }
+    if (item.pd.price_incl != null) {
+      const p2 = document.createElement('span');
+      p2.className = 'price-pill base';
+      p2.textContent = '💰 含稅 ¥' + Number(item.pd.price_incl).toLocaleString();
+      pills.appendChild(p2);
+      const p3 = document.createElement('span');
+      p3.className = 'price-pill visa';
+      p3.textContent = '💳 ≈NT$' + Math.round(item.pd.price_incl * JPY_TWD_VISA).toLocaleString();
+      pills.appendChild(p3);
+    }
+    box.appendChild(pills);
+    if (item.pd.where) {
+      const w = document.createElement('div');
+      w.style.fontSize = '0.72rem';
+      w.textContent = '📍 ' + item.pd.where;
+      box.appendChild(w);
+    }
+    if (item.pd.note) {
+      const n = document.createElement('div');
+      n.style.cssText = 'font-size:0.68rem;color:rgba(250,248,243,0.45);margin-top:2px;';
+      n.textContent = item.pd.note;
+      box.appendChild(n);
+    }
+    div.appendChild(box);
+  }
+
+  // Action buttons
+  const acts = document.createElement('div');
+  acts.style.cssText = 'display:flex;gap:6px;margin-top:8px;';
+  if (!item.pd && !item.qing) {
+    const bq = document.createElement('button');
+    bq.className = 'btn btn-sky';
+    bq.style.cssText = 'flex:1;font-size:0.72rem;padding:7px;';
+    bq.textContent = '🤖 AI 查詢售價';
+    bq.onclick = function() { queryPrice(item.id); };
+    acts.appendChild(bq);
+  } else if (item.pd) {
+    const br = document.createElement('button');
+    br.className = 'btn btn-sky';
+    br.style.cssText = 'flex:1;font-size:0.72rem;padding:7px;';
+    br.textContent = '🔄 重新查詢';
+    br.onclick = function() { queryPrice(item.id); };
+    acts.appendChild(br);
+  }
+  const bdel = document.createElement('button');
+  bdel.className = 'btn btn-danger';
+  bdel.style.cssText = 'font-size:0.72rem;padding:7px 12px;';
+  bdel.textContent = '🗑';
+  bdel.onclick = function() { removeItem(item.id); };
+  acts.appendChild(bdel);
+  div.appendChild(acts);
+
+  return div;
+}
+
+function renderShop() {
+  let items = [...shopList];
+  if (shopFilterVal === '未購') items = items.filter(x => !x.bought);
+  else if (shopFilterVal === '已購') items = items.filter(x => x.bought);
+  else if (shopFilterVal !== 'all') items = items.filter(x => x.cat === shopFilterVal);
+
+  const list = document.getElementById('shop-list');
+  list.innerHTML = '';
+  if (!items.length) {
+    list.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text-dim);font-size:0.85rem;">' +
+      (shopList.length ? '此篩選無商品' : '清單是空的，快來加入想買的商品 🛍️') + '</div>';
+  } else {
+    items.forEach(item => list.appendChild(buildItemEl(item)));
+  }
+
+  const batch = document.getElementById('shop-batch');
+  batch.style.display = shopList.length ? 'flex' : 'none';
+  updateShopSummary();
+}
+
+function updateShopSummary() {
+  const total = shopList.reduce((s, x) => {
+    const p = (x.pd && x.pd.price_incl) ? x.pd.price_incl : (x.budget || 0);
+    return s + p * x.qty;
+  }, 0);
+  document.getElementById('shop-tjpy').textContent = '¥' + total.toLocaleString() + '（預估）';
+  document.getElementById('shop-ttwd').textContent = 'NT$' + Math.round(total * JPY_TWD_VISA).toLocaleString();
+  const bought = shopList.filter(x => x.bought).length;
+  document.getElementById('shop-prog').textContent = bought + ' / ' + shopList.length;
+}
+
+async function queryPrice(id) {
+  const item = shopList.find(x => x.id === id);
+  if (!item) return;
+  const key = getApiKey();
+  if (!key) return;
+  item.qing = true;
+  item.pd = null;
+  saveShop();
+  renderShop();
+
+  const prompt = '你是日本購物達人，查詢「' + item.name + '」在日本的售價。只回傳JSON（無markdown）：{"price_excl":未稅日圓整數或null,"price_incl":含稅日圓整數,"where":"最便宜通常在哪買（松本清/唐吉訶德/AEON等）","note":"備注（可退稅/限定等，25字內）"}。price_incl必填，若不確定則price_excl×1.1。';
+
+  try {
+    const resp = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 300 }
+        })
+      }
+    );
+    const d = await resp.json();
+    if (d.error) throw new Error(d.error.message);
+    const txt = ((d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0] ? d.candidates[0].content.parts[0].text : '') || '').replace(/```json|```/gi, '').trim();
+    const parsed = JSON.parse(txt.slice(txt.indexOf('{')));
+    if (!parsed.price_incl && parsed.price_excl) parsed.price_incl = Math.round(parsed.price_excl * 1.1);
+    item.pd = parsed;
+    if (!item.budget && parsed.price_incl) item.budget = parsed.price_incl;
+  } catch (e) {
+    item.pd = { price_excl: null, price_incl: null, where: '查詢失敗', note: e.message };
+  }
+  item.qing = false;
+  saveShop();
+  renderShop();
+}
+
+async function queryAllPrices() {
+  const key = getApiKey();
+  if (!key) return;
+  const todo = shopList.filter(x => !x.pd && !x.bought && !x.qing);
+  if (!todo.length) { showToast('所有商品已有價格資料'); return; }
+  showToast('🤖 開始查詢 ' + todo.length + ' 項商品售價…');
+  for (const item of todo) {
+    await queryPrice(item.id);
+    await new Promise(r => setTimeout(r, 700));
+  }
+  showToast('✅ 全部查詢完成！');
+}
+
+function renderHotlist() {
+  const el = document.getElementById('hotlist');
+  el.innerHTML = '';
+  HOTLIST.forEach(function(pair) {
+    const name = pair[0], cat = pair[1];
+    const btn = document.createElement('button');
+    btn.className = 'hotchip';
+    btn.textContent = (CAT_ICON[cat] || '📦') + ' ' + name;
+    btn.onclick = function() { hotAdd(name, cat); };
+    el.appendChild(btn);
+  });
+}
+
+// Init shopping (must be after shopList declaration)
+renderShop();
+renderHotlist();
+
 // PWA Service Worker
 if('serviceWorker' in navigator) {
   const swCode = `
