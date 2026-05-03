@@ -993,43 +993,51 @@ body::before {
 <div id="panel-currency" class="panel">
   <div class="section-label">匯率換算 · Visa 刷卡匯率</div>
 
+
   <!-- Live rate banner -->
-  <div class="card" id="rate-card" style="border-color:rgba(74,144,217,0.35);margin-bottom:14px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+  <div class="card" id="rate-card" style="border-color:rgba(201,168,76,0.4);margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div>
-        <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:4px;" id="rate-source-label">🔄 載入即時匯率中…</div>
-        <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;">
-          <span style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--sakura);" id="rate-big">—</span>
-          <span style="font-size:0.8rem;color:var(--text-dim);">NT$ / ¥100</span>
+        <div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:5px;" id="rate-source-label">🔄 載入台灣銀行匯率中…</div>
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+          <span style="font-family:'Playfair Display',serif;font-size:2.8rem;line-height:1;color:var(--gold);" id="rate-big">—</span>
+          <div>
+            <div style="font-size:0.8rem;color:var(--text-dim);">NT$ / ¥100</div>
+            <div style="font-size:0.72rem;color:var(--text-dim);margin-top:2px;" id="rate-reverse-label">NT$1 ≈ ¥—</div>
+          </div>
         </div>
-        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:4px;" id="rate-reverse-label">NT$1 ≈ ¥— </div>
+        <div style="margin-top:8px;">
+          <span style="font-size:0.7rem;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:3px 10px;border-radius:10px;">🏦 台灣銀行現金賣出牌告</span>
+        </div>
       </div>
-      <div style="text-align:right;">
-        <button class="btn btn-sky" style="font-size:0.72rem;padding:7px 12px;" onclick="loadLiveRate()">🔄 更新匯率</button>
-        <div style="font-size:0.62rem;color:rgba(250,248,243,0.3);margin-top:5px;" id="rate-updated-at">—</div>
-      </div>
-    </div>
-    <!-- Visa fee breakdown -->
-    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
-      <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:8px 4px;">
-        <div style="font-size:0.85rem;color:#7bbfef;font-weight:600;" id="rate-ecb">—</div>
-        <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">現金買入（賣回）</div>
-      </div>
-      <div style="background:rgba(244,167,185,0.08);border:1px solid rgba(244,167,185,0.2);border-radius:10px;padding:8px 4px;">
-        <div style="font-size:0.85rem;color:var(--sakura);font-weight:700;" id="rate-visa">—</div>
-        <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">Visa 刷卡參考</div>
-      </div>
-      <div style="background:rgba(201,168,76,0.08);border-radius:10px;padding:8px 4px;">
-        <div style="font-size:0.85rem;color:var(--gold);font-weight:600;" id="rate-cash">—</div>
-        <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">🏦 台銀現金賣出 ★</div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+        <button class="btn btn-sky" style="font-size:0.75rem;padding:8px 14px;" onclick="loadLiveRate()">🔄 更新匯率</button>
+        <div style="font-size:0.62rem;color:rgba(250,248,243,0.3);" id="rate-updated-at">—</div>
       </div>
     </div>
-    <div class="tip" style="margin-top:10px;font-size:0.7rem;">
-      <strong>🏦 台灣銀行現金賣出</strong>為你去銀行換日幣時的匯率（★ 主要顯示值）。<br>
-      <strong>💳 Visa刷卡</strong>約等於即期匯率，通常比現金賣出便宜約1.2%。<br>
-      建議在日本直接以<strong>日圓付款</strong>，避免 DCC 動態貨幣換算。
+    <div class="tip" style="margin-top:10px;font-size:0.72rem;">
+      以<strong>台灣銀行現金賣出</strong>為主（換日幣的匯率）。非營業時間顯示最近一次牌告。
     </div>
   </div>
+
+  <!-- Manual rate override -->
+  <div class="card" style="margin-bottom:14px;border-color:rgba(123,94,167,0.3);">
+    <div class="card-title" style="margin-bottom:10px;">✏️ 手動設定匯率</div>
+    <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:10px;">自動抓取失敗時，可手動輸入台銀牌告的現金賣出匯率</div>
+    <div class="input-wrap" style="margin-bottom:8px;">
+      <label>¥100 =</label>
+      <input type="number" id="manual-rate-input" placeholder="例：20.52" step="0.001" style="text-align:right;font-size:1.1rem;">
+      <span class="tag">NT$</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="flex:2;" onclick="applyManualRate()">✅ 套用此匯率</button>
+      <button class="btn btn-sky" style="flex:1;font-size:0.75rem;" onclick="loadLiveRate()">🔄 自動抓取</button>
+    </div>
+    <div style="font-size:0.68rem;color:rgba(250,248,243,0.35);margin-top:7px;text-align:center;">
+      台銀牌告查詢：<a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" style="color:#7bbfef;">rate.bot.com.tw</a>
+    </div>
+  </div>
+
 
   <div class="card">
     <div class="card-title">🔄 自由換算</div>
@@ -1995,123 +2003,100 @@ let curDir = 'j2t';
 let rateLoaded = false;
 
 async function loadLiveRate() {
-  const btn = document.querySelector('[onclick="loadLiveRate()"]');
+  var btn = document.querySelector('[onclick="loadLiveRate()"]');
   if(btn) { btn.textContent = '🔄 更新中…'; btn.disabled = true; }
   document.getElementById('rate-source-label').textContent = '🔄 連線台灣銀行取得匯率…';
 
-  var sellCash = null; // 台銀現金賣出（NT$ per 1 JPY）
+  // 台銀 CSV 欄位（每行）: 幣別(0),現金買入(1),現金賣出(2),即期買入(3),即期賣出(4)
+  // 值的單位：NT$ per 1 外幣（例如 JPY = 0.2052）
+  var sellCash = null;
   var source = '';
 
-  // ── 策略1：台銀 CSV via allorigins CORS proxy ──
-  try {
-    var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://rate.bot.com.tw/xrt/flcsv/0/day');
-    var r1 = await fetch(proxyUrl);
-    if(!r1.ok) throw new Error('proxy fail');
-    var j1 = await r1.json();
-    var csv = j1.contents || '';
-    // CSV format: 幣別,現金買入,現金賣出,即期買入,即期賣出,...
-    // Find JPY row
-    var rows = csv.split('\n');
+  function parseBotCsv(text) {
+    var rows = text.split('\n');
     for(var i = 0; i < rows.length; i++) {
       var cols = rows[i].split(',');
-      // JPY row: cols[0] contains 日本 or JPY
-      if(cols[0] && (cols[0].indexOf('JPY') !== -1 || cols[0].indexOf('日本') !== -1)) {
-        var val = parseFloat(cols[2]); // 現金賣出 (col index 2)
-        if(!isNaN(val) && val > 0) {
-          sellCash = val; // CSV value is already NT$ per 1 JPY (e.g. 0.2052)
-          source = '台灣銀行現金賣出';
-          break;
-        }
+      if(cols.length >= 3 && cols[0] && (cols[0].indexOf('JPY') !== -1 || cols[0].indexOf('日本') !== -1)) {
+        var v = parseFloat(cols[2]); // 現金賣出 = col index 2
+        if(!isNaN(v) && v > 0.1 && v < 1) return v; // NT$ per 1 JPY, should be ~0.20
       }
     }
-    if(!sellCash) throw new Error('JPY not found in CSV');
-    // Sanity check: JPY/TWD should be between 0.15 and 0.35
-    if(sellCash < 0.1 || sellCash > 1) throw new Error('CSV parse error: value ' + sellCash + ' out of range');
+    return null;
+  }
+
+  // Strategy 1: allorigins proxy
+  try {
+    var r1 = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://rate.bot.com.tw/xrt/flcsv/0/day'));
+    if(!r1.ok) throw new Error('s1 fail');
+    var j1 = await r1.json();
+    sellCash = parseBotCsv(j1.contents || '');
+    if(sellCash) source = '台灣銀行 現金賣出牌告';
+    else throw new Error('JPY not found');
   } catch(e1) {
-    // ── 策略2：備用 CORS proxy ──
+    // Strategy 2: corsproxy.io
     try {
-      var proxy2 = 'https://corsproxy.io/?' + encodeURIComponent('https://rate.bot.com.tw/xrt/flcsv/0/day');
-      var r2 = await fetch(proxy2);
-      if(!r2.ok) throw new Error('proxy2 fail');
-      var csv2 = await r2.text();
-      var rows2 = csv2.split('\n');
-      for(var ii = 0; ii < rows2.length; ii++) {
-        var cols2 = rows2[ii].split(',');
-        if(cols2[0] && (cols2[0].indexOf('JPY') !== -1 || cols2[0].indexOf('日本') !== -1)) {
-          var val2 = parseFloat(cols2[2]);
-          if(!isNaN(val2) && val2 > 0) {
-            sellCash = val2; // already NT$ per 1 JPY
-            source = '台灣銀行現金賣出';
-            break;
-          }
-        }
-      }
-      if(!sellCash) throw new Error('JPY not found');
+      var r2 = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://rate.bot.com.tw/xrt/flcsv/0/day'));
+      if(!r2.ok) throw new Error('s2 fail');
+      sellCash = parseBotCsv(await r2.text());
+      if(sellCash) source = '台灣銀行 現金賣出牌告';
+      else throw new Error('JPY not found');
     } catch(e2) {
-      // ── 策略3：ExchangeRate-API (免費 CORS，市場匯率) ──
+      // Strategy 3: ExchangeRate-API (market rate, +2% approximation)
       try {
         var r3 = await fetch('https://open.er-api.com/v6/latest/JPY');
-        if(!r3.ok) throw new Error('er-api fail');
+        if(!r3.ok) throw new Error('s3 fail');
         var d3 = await r3.json();
         if(d3.rates && d3.rates.TWD) {
-          sellCash = d3.rates.TWD * 1.02; // 市場匯率加2%估算台銀現金賣出
-          source = '市場匯率（ExchangeRate-API，+2%估算台銀現金賣出）';
+          sellCash = d3.rates.TWD * 1.025;
+          source = '市場匯率估算（+2.5%近似台銀現金賣出）';
         } else throw new Error('no TWD');
       } catch(e3) {
-        // ── 策略4：Frankfurter ECB 最終備援 ──
+        // Strategy 4: Frankfurter ECB
         try {
           var r4 = await fetch('https://api.frankfurter.app/latest?from=JPY&to=TWD');
-          if(!r4.ok) throw new Error('frankfurter fail');
+          if(!r4.ok) throw new Error('s4 fail');
           var d4 = await r4.json();
-          sellCash = d4.rates.TWD * 1.03; // ECB + 3% 估算台銀現金賣出
-          source = '歐洲央行匯率（Frankfurter，+3%估算台銀現金賣出）';
-        } catch(e4) {
-          // 全部失敗，用預設值
-          source = '⚠️ 無法連線，使用預設值';
-        }
+          if(d4.rates && d4.rates.TWD) {
+            sellCash = d4.rates.TWD * 1.03;
+            source = 'ECB匯率估算（+3%近似台銀現金賣出）';
+          }
+        } catch(e4) { /* all failed */ }
       }
     }
   }
 
-  // ── 套用匯率 ──
   if(sellCash && sellCash > 0) {
-    // 以台銀現金賣出為主顯示值
-    var botCash    = sellCash;                 // 台銀現金賣出
-    var botSpot    = sellCash * 0.988;         // 估算即期（通常比現金少1.2%）
-    var botCashBuy = sellCash * 0.962;         // 估算現金買入（約差3.8%）
-    var visaRate   = sellCash * 0.988;         // Visa刷卡≈即期，不含現金溢價
-
-    JPY_TWD      = botCash;
-    JPY_TWD_VISA = visaRate;
-    JPY_TWD_CASH = botCash;
-
-    var per100 = (botCash * 100).toFixed(3);
-    var visaPer100 = (visaRate * 100).toFixed(3);
-    var buyPer100  = (botCashBuy * 100).toFixed(3);
-
-    document.getElementById('rate-big').textContent = per100;
-    document.getElementById('rate-reverse-label').textContent = 'NT$1 ≈ ¥' + (1/botCash).toFixed(2);
-    document.getElementById('rate-ecb').textContent  = buyPer100;     // 現金買入（你帶日幣回來賣）
-    document.getElementById('rate-visa').textContent = visaPer100;    // 刷卡參考
-    document.getElementById('rate-cash').textContent = per100;        // 現金賣出（你買日幣）
-    var now = new Date();
-    document.getElementById('rate-source-label').textContent = '✅ ' + source;
-    document.getElementById('rate-updated-at').textContent = '更新：' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+    JPY_TWD      = sellCash;
+    JPY_TWD_VISA = sellCash;
+    JPY_TWD_CASH = sellCash;
+    applyRateToUI(sellCash * 100, source, true);
+    rateLoaded = true;
   } else {
-    document.getElementById('rate-source-label').textContent = source || '⚠️ 匯率更新失敗，顯示預設值';
-    var fb = (JPY_TWD_CASH * 100).toFixed(3);
-    document.getElementById('rate-big').textContent = fb;
-    document.getElementById('rate-ecb').textContent  = (JPY_TWD_CASH * 0.962 * 100).toFixed(3);
-    document.getElementById('rate-visa').textContent = (JPY_TWD_VISA * 100).toFixed(3);
-    document.getElementById('rate-cash').textContent = fb;
-    document.getElementById('rate-reverse-label').textContent = 'NT$1 ≈ ¥' + (1/JPY_TWD_CASH).toFixed(2);
+    applyRateToUI(JPY_TWD_CASH * 100, '⚠️ 無法連線，請手動輸入匯率', false);
   }
 
+  if(btn) { btn.textContent = '🔄 更新匯率'; btn.disabled = false; }
+}
+
+function applyRateToUI(per100, sourceLabel, success) {
+  document.getElementById('rate-big').textContent = per100.toFixed(3);
+  document.getElementById('rate-reverse-label').textContent = 'NT$1 ≈ ¥' + (100 / per100).toFixed(2);
+  document.getElementById('rate-source-label').textContent = (success ? '✅ ' : '') + sourceLabel;
+  var now = new Date();
+  document.getElementById('rate-updated-at').textContent = '更新：' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
   calcCurrency();
   updateFuelCalc();
   renderQuick();
-  rateLoaded = true;
-  if(btn) { btn.textContent = '🔄 更新匯率'; btn.disabled = false; }
+}
+
+function applyManualRate() {
+  var v = parseFloat(document.getElementById('manual-rate-input').value);
+  if(isNaN(v) || v <= 0) { showToast('請輸入有效的匯率數值'); return; }
+  // Input is NT$ per ¥100, convert to per 1 JPY
+  var perOne = v / 100;
+  JPY_TWD = JPY_TWD_VISA = JPY_TWD_CASH = perOne;
+  applyRateToUI(v, '手動設定（台銀現金賣出）', true);
+  showToast('✅ 匯率已設定為 ¥100 = NT$' + v.toFixed(3));
 }
 
 function updateFuelCalc() {
