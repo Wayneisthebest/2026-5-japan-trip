@@ -2385,7 +2385,7 @@ async function scanMenu() {
               { text: prompt }
             ]
           }],
-          generationConfig: { temperature: 0.1, maxOutputTokens: 2000 }
+          generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
         })
       }
     );
@@ -2395,12 +2395,33 @@ async function scanMenu() {
     if(data.error) throw new Error(data.error.message);
 
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    // Strip markdown code fences if present
-    const clean = text.replace(/```json|```/g, '').trim();
-    const jsonMatch = clean.match(/\{[\s\S]*\}/);
-    if(!jsonMatch) throw new Error('無法解析回應，請重試');
-    const parsed = JSON.parse(jsonMatch[0]);
+    const clean = text.replace(/```json|```/gi, '').trim();
+    const jsonStart = clean.indexOf('{');
+    if(jsonStart === -1) throw new Error('無法解析回應，請重試');
+    let jsonStr = clean.slice(jsonStart);
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch(e) {
+      const lastBrace = jsonStr.lastIndexOf('}');
+      if(lastBrace < 0) throw new Error('回應格式錯誤，請重試');
+      let fixed = jsonStr.slice(0, lastBrace + 1);
+      const openArr = (fixed.match(/\[/g)||[]).length - (fixed.match(/\]/g)||[]).length;
+      const openObj = (fixed.match(/\{/g)||[]).length - (fixed.match(/\}/g)||[]).length;
+      for(let i = 0; i < openObj; i++) fixed += '}';
+      for(let i = 0; i < openArr; i++) fixed += ']';
+      fixed += '}';
+      try {
+        parsed = JSON.parse(fixed);
+        parsed._truncated = true;
+      } catch(e2) {
+        throw new Error('菜單太長無法完整解析，請分上下兩段拍照');
+      }
+    }
     scannedItems = parsed.items || [];
+    if(parsed._truncated && scannedItems.length) {
+      parsed._notice = '菜單較長，已識別前 ' + scannedItems.length + ' 項。如需完整翻譯請分段拍照。';
+    }
     renderScanResults(parsed);
 
   } catch(err) {
@@ -2428,12 +2449,14 @@ function renderScanResults(parsed) {
     list.innerHTML = '<div class="err-box">未找到菜品，請確認菜單圖片清晰</div>';
     return;
   }
+  const truncatedNote = parsed._notice
+    ? `<div style="padding:10px 16px;font-size:0.75rem;color:#f4c77a;border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(201,168,76,0.08);">⚠️ ${parsed._notice}</div>` : '';
   const typeNote = parsed.restaurant_type
     ? `<div style="padding:10px 16px;font-size:0.75rem;color:var(--text-dim);border-bottom:1px solid rgba(255,255,255,0.05);">
          📍 餐廳類型：${parsed.restaurant_type}
          ${parsed.notes ? `<span style="margin-left:8px;color:rgba(250,248,243,0.35);">${parsed.notes}</span>` : ''}
        </div>` : '';
-  list.innerHTML = typeNote + parsed.items.map((item, i) => `
+  list.innerHTML = truncatedNote + typeNote + parsed.items.map((item, i) => `
     <div class="scan-item" id="si-${i}" onclick="toggleScanItem(${i})">
       <div style="font-size:1.1rem;margin-top:2px;transition:all 0.15s;" id="si-chk-${i}">☐</div>
       <div style="flex:1;">
