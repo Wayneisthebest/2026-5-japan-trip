@@ -1011,12 +1011,12 @@ body::before {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
-        <button class="btn btn-sky" style="font-size:0.75rem;padding:8px 14px;" onclick="loadLiveRate()">🔄 更新匯率</button>
+
         <div style="font-size:0.62rem;color:rgba(250,248,243,0.3);" id="rate-updated-at">—</div>
       </div>
     </div>
     <div class="tip" style="margin-top:10px;font-size:0.72rem;">
-      以<strong>台灣銀行現金賣出</strong>為主（換日幣的匯率）。非營業時間顯示最近一次牌告。
+      請至下方手動輸入<strong>台灣銀行現金賣出</strong>匯率（換日幣時適用）。
     </div>
   </div>
 
@@ -1031,7 +1031,6 @@ body::before {
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-primary" style="flex:2;" onclick="applyManualRate()">✅ 套用此匯率</button>
-      <button class="btn btn-sky" style="flex:1;font-size:0.75rem;" onclick="loadLiveRate()">🔄 自動抓取</button>
     </div>
     <div style="font-size:0.68rem;color:rgba(250,248,243,0.35);margin-top:7px;text-align:center;">
       台銀牌告查詢：<a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" style="color:#7bbfef;">rate.bot.com.tw</a>
@@ -2002,82 +2001,7 @@ function getGPS() {
 let curDir = 'j2t';
 let rateLoaded = false;
 
-async function loadLiveRate() {
-  var btn = document.querySelector('[onclick="loadLiveRate()"]');
-  if(btn) { btn.textContent = '🔄 更新中…'; btn.disabled = true; }
-  document.getElementById('rate-source-label').textContent = '🔄 連線台灣銀行取得匯率…';
-
-  // 台銀 CSV 欄位（每行）: 幣別(0),現金買入(1),現金賣出(2),即期買入(3),即期賣出(4)
-  // 值的單位：NT$ per 1 外幣（例如 JPY = 0.2052）
-  var sellCash = null;
-  var source = '';
-
-  function parseBotCsv(text) {
-    var rows = text.split('\n');
-    for(var i = 0; i < rows.length; i++) {
-      var cols = rows[i].split(',');
-      if(cols.length >= 3 && cols[0] && (cols[0].indexOf('JPY') !== -1 || cols[0].indexOf('日本') !== -1)) {
-        var v = parseFloat(cols[2]); // 現金賣出 = col index 2
-        if(!isNaN(v) && v > 0.1 && v < 1) return v; // NT$ per 1 JPY, should be ~0.20
-      }
-    }
-    return null;
-  }
-
-  // Strategy 1: allorigins proxy
-  try {
-    var r1 = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://rate.bot.com.tw/xrt/flcsv/0/day'));
-    if(!r1.ok) throw new Error('s1 fail');
-    var j1 = await r1.json();
-    sellCash = parseBotCsv(j1.contents || '');
-    if(sellCash) source = '台灣銀行 現金賣出牌告';
-    else throw new Error('JPY not found');
-  } catch(e1) {
-    // Strategy 2: corsproxy.io
-    try {
-      var r2 = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://rate.bot.com.tw/xrt/flcsv/0/day'));
-      if(!r2.ok) throw new Error('s2 fail');
-      sellCash = parseBotCsv(await r2.text());
-      if(sellCash) source = '台灣銀行 現金賣出牌告';
-      else throw new Error('JPY not found');
-    } catch(e2) {
-      // Strategy 3: ExchangeRate-API (market rate, +2% approximation)
-      try {
-        var r3 = await fetch('https://open.er-api.com/v6/latest/JPY');
-        if(!r3.ok) throw new Error('s3 fail');
-        var d3 = await r3.json();
-        if(d3.rates && d3.rates.TWD) {
-          sellCash = d3.rates.TWD * 1.025;
-          source = '市場匯率估算（+2.5%近似台銀現金賣出）';
-        } else throw new Error('no TWD');
-      } catch(e3) {
-        // Strategy 4: Frankfurter ECB
-        try {
-          var r4 = await fetch('https://api.frankfurter.app/latest?from=JPY&to=TWD');
-          if(!r4.ok) throw new Error('s4 fail');
-          var d4 = await r4.json();
-          if(d4.rates && d4.rates.TWD) {
-            sellCash = d4.rates.TWD * 1.03;
-            source = 'ECB匯率估算（+3%近似台銀現金賣出）';
-          }
-        } catch(e4) { /* all failed */ }
-      }
-    }
-  }
-
-  if(sellCash && sellCash > 0) {
-    JPY_TWD      = sellCash;
-    JPY_TWD_VISA = sellCash;
-    JPY_TWD_CASH = sellCash;
-    applyRateToUI(sellCash * 100, source, true);
-    rateLoaded = true;
-  } else {
-    applyRateToUI(JPY_TWD_CASH * 100, '⚠️ 無法連線，請手動輸入匯率', false);
-  }
-
-  if(btn) { btn.textContent = '🔄 更新匯率'; btn.disabled = false; }
-}
-
+// loadLiveRate removed — manual only
 function applyRateToUI(per100, sourceLabel, success) {
   document.getElementById('rate-big').textContent = per100.toFixed(3);
   document.getElementById('rate-reverse-label').textContent = 'NT$1 ≈ ¥' + (100 / per100).toFixed(2);
@@ -2092,11 +2016,27 @@ function applyRateToUI(per100, sourceLabel, success) {
 function applyManualRate() {
   var v = parseFloat(document.getElementById('manual-rate-input').value);
   if(isNaN(v) || v <= 0) { showToast('請輸入有效的匯率數值'); return; }
-  // Input is NT$ per ¥100, convert to per 1 JPY
   var perOne = v / 100;
   JPY_TWD = JPY_TWD_VISA = JPY_TWD_CASH = perOne;
+  localStorage.setItem('manualRate', String(v));
   applyRateToUI(v, '手動設定（台銀現金賣出）', true);
   showToast('✅ 匯率已設定為 ¥100 = NT$' + v.toFixed(3));
+}
+
+function initRate() {
+  var saved = localStorage.getItem('manualRate');
+  if(saved) {
+    var v = parseFloat(saved);
+    if(v > 0) {
+      var perOne = v / 100;
+      JPY_TWD = JPY_TWD_VISA = JPY_TWD_CASH = perOne;
+      document.getElementById('manual-rate-input').value = saved;
+      applyRateToUI(v, '已儲存的手動匯率（台銀現金賣出）', true);
+      return;
+    }
+  }
+  // Default fallback
+  applyRateToUI(JPY_TWD_CASH * 100, '請輸入台銀現金賣出匯率', false);
 }
 
 function updateFuelCalc() {
@@ -2481,8 +2421,8 @@ loadWeather('oarai', null);
 // Load API key state
 loadApiKeyState();
 
-// Load live exchange rate
-loadLiveRate();
+// Rate: manual input only
+initRate();
 
 
 // Fuel calc handled by updateFuelCalc() after rate loads
@@ -3106,41 +3046,47 @@ function updateShopSummary() {
 }
 
 async function queryPrice(id) {
-  const item = shopList.find(x => x.id === id);
+  var item = shopList.find(function(x) { return x.id === id; });
   if (!item) return;
-  const key = getApiKey();
+  var key = getApiKey();
   if (!key) return;
   item.qing = true;
   item.pd = null;
   saveShop();
   renderShop();
 
-  const prompt = '你是日本購物達人，查詢「' + item.name + '」在日本的售價。只回傳JSON（無markdown）：{"price_excl":未稅日圓整數或null,"price_incl":含稅日圓整數,"where":"最便宜通常在哪買（松本清/唐吉訶德/AEON等）","note":"備注（可退稅/限定等，25字內）"}。price_incl必填，若不確定則price_excl×1.1。';
+  var prompt = '你是日本購物達人。查詢「' + item.name + '」在日本的售價。只回傳以下JSON，不要加任何說明或markdown：{"price_excl":數字或0,"price_incl":數字,"where":"在哪裡買最便宜","note":"備注25字內"}';
 
   try {
-    const resp = await fetch(
+    var resp = await fetch(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key,
       { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 300 }
+          generationConfig: { temperature: 0.1, maxOutputTokens: 800 }
         })
       }
     );
-    const d = await resp.json();
+    var d = await resp.json();
     if (d.error) throw new Error(d.error.message);
-    const txt = ((d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0] ? d.candidates[0].content.parts[0].text : '') || '').replace(/```json|```/gi, '').trim();
-    const parsed = JSON.parse(txt.slice(txt.indexOf('{')));
+    var rawTxt = (d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0]) ? d.candidates[0].content.parts[0].text : '';
+    var txt = rawTxt.replace(/```json|```/gi, '').trim();
+    var jsonStart = txt.indexOf('{');
+    var jsonEnd   = txt.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) throw new Error('回應格式錯誤，請重試');
+    var parsed = JSON.parse(txt.slice(jsonStart, jsonEnd + 1));
     if (!parsed.price_incl && parsed.price_excl) parsed.price_incl = Math.round(parsed.price_excl * 1.1);
+    if (!parsed.price_incl) parsed.price_incl = 0;
     item.pd = parsed;
     if (!item.budget && parsed.price_incl) item.budget = parsed.price_incl;
   } catch (e) {
-    item.pd = { price_excl: null, price_incl: null, where: '查詢失敗', note: e.message };
+    item.pd = { price_excl: 0, price_incl: 0, where: '查詢失敗', note: e.message };
   }
   item.qing = false;
   saveShop();
   renderShop();
 }
+
 
 async function queryAllPrices() {
   const key = getApiKey();
