@@ -19,7 +19,9 @@
   --muted:#78716c;--border:#e5e7eb;
   --safe-b:env(safe-area-inset-bottom,0px);
   --orange:#f97316;--purple:#8b5cf6;--red:#ef4444;--blue:#3b82f6;
+  --scale:1;
 }
+html{font-size:calc(16px * var(--scale));}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
 html,body{background:var(--bg);font-family:'DM Sans','Noto Sans JP',sans-serif;color:var(--ink);overflow-x:hidden}
 body{padding-bottom:calc(64px + var(--safe-b))}
@@ -274,6 +276,115 @@ body{padding-bottom:calc(64px + var(--safe-b))}
 /* ITIN ITEM THUMBNAIL */
 .itin-thumb{width:52px;height:52px;border-radius:9px;object-fit:cover;margin-top:6px;flex-shrink:0;background:var(--teal-bg)}
 .itin-thumb-placeholder{width:52px;height:52px;border-radius:9px;margin-top:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--teal-bg)}
+
+/* FONT SCALE CONTROL */
+.scale-btn{background:rgba(255,255,255,.18);border:none;border-radius:9px;padding:5px 8px;color:#fff;cursor:pointer;font-size:.75rem;font-family:'DM Sans',sans-serif;transition:.15s;display:flex;align-items:center;gap:2px;line-height:1}
+.scale-btn:hover{background:rgba(255,255,255,.3)}
+.scale-panel{position:absolute;top:100%;right:14px;margin-top:6px;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:300;min-width:200px;animation:fadeUp .2s ease}
+.scale-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.scale-row:last-child{margin-bottom:0}
+.scale-label{font-size:.78rem;color:var(--muted);flex:1}
+.scale-track{display:flex;align-items:center;gap:4px}
+.scale-step{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--ink);transition:.15s;display:flex;align-items:center;justify-content:center}
+.scale-step.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.scale-step:hover{border-color:var(--teal);color:var(--teal)}
+.scale-step.on:hover{background:var(--teal-d)}
+
+/* ── PREP TAB ── */
+.prep-section { margin-bottom: 22px; }
+.prep-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .8rem; font-weight: 800; letter-spacing: .05em;
+  color: var(--teal-d); text-transform: uppercase;
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--teal-bg);
+}
+.prep-card {
+  background: #fff; border-radius: 16px;
+  border: 1.5px solid var(--border);
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.prep-card-title { font-size:.9rem; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.prep-card-body { font-size:.78rem; color:var(--muted); line-height:1.6; }
+.prep-card-body b { color:var(--ink); }
+.prep-tag {
+  display:inline-flex; align-items:center; gap:4px;
+  background:var(--teal-bg); color:var(--teal-d);
+  border-radius:99px; padding:2px 10px;
+  font-size:.68rem; font-weight:700; margin:3px 2px;
+}
+.prep-tag.warn { background:#fff3cd; color:#856404; }
+.prep-tag.red  { background:#fde8e8; color:#c0392b; }
+/* Checklist */
+.checklist-group { margin-bottom: 18px; }
+.checklist-group-title {
+  font-size:.75rem; font-weight:800; letter-spacing:.05em;
+  color:var(--muted); text-transform:uppercase;
+  margin-bottom:8px; display:flex; align-items:center; gap:6px;
+}
+.check-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 0; border-bottom:1px solid var(--border-light,#f0ede8);
+  cursor:pointer; user-select:none;
+}
+.check-item:last-child { border-bottom:none; }
+.check-box {
+  width:22px; height:22px; border-radius:7px; flex-shrink:0;
+  border:2px solid var(--border); background:#fff;
+  display:flex; align-items:center; justify-content:center;
+  transition:.15s; margin-top:1px;
+}
+.check-box.done { background:var(--teal); border-color:var(--teal); }
+.check-box.done::after { content:'✓'; color:#fff; font-size:.85rem; font-weight:800; }
+.check-label { flex:1; }
+.check-name { font-size:.84rem; font-weight:600; color:var(--ink); }
+.check-name.done { text-decoration:line-through; color:var(--muted); }
+.check-tip { font-size:.7rem; color:var(--muted); margin-top:2px; }
+.prep-progress {
+  display:flex; align-items:center; gap:10px;
+  background:var(--teal-bg); border-radius:12px;
+  padding:12px 16px; margin-bottom:18px;
+}
+.prep-progress-bar-wrap {
+  flex:1; height:8px; background:rgba(0,0,0,.08); border-radius:99px; overflow:hidden;
+}
+.prep-progress-bar {
+  height:100%; background:var(--teal); border-radius:99px; transition:.3s;
+}
+.prep-progress-txt { font-size:.75rem; font-weight:700; color:var(--teal-d); white-space:nowrap; }
+.prep-progress-emoji { font-size:1.1rem; }
+
+
+/* ── CAMERA MODAL ── */
+.cam-modal-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:rgba(0,0,0,.55); backdrop-filter:blur(3px);
+  display:flex; align-items:flex-end; justify-content:center;
+}
+.cam-modal {
+  background:#fff; border-radius:22px 22px 0 0;
+  width:100%; max-width:520px;
+  max-height:90vh; overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom,16px);
+}
+.cam-modal-hdr {
+  position:sticky; top:0; background:#fff; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 18px 12px;
+  border-bottom:1px solid var(--border);
+}
+.cam-modal-title {
+  font-size:1rem; font-weight:800; color:var(--ink);
+  display:flex; align-items:center; gap:8px;
+}
+.cam-modal-close {
+  width:34px; height:34px; border-radius:50%;
+  border:none; background:var(--border); color:var(--ink);
+  font-size:1rem; cursor:pointer; display:flex;
+  align-items:center; justify-content:center;
+}
+.cam-modal-body { padding:14px 16px; }
+
 </style>
 </head>
 <body>
@@ -424,8 +535,26 @@ body{padding-bottom:calc(64px + var(--safe-b))}
       <div class="hdr-title">🌸 旅遊助理</div>
       <div class="hdr-sub">茨城・栃木・群馬 · 5/7–5/12 · 2026</div>
     </div>
-    <div class="hdr-btns">
-      <button class="hdr-btn" @click="tab='restaurants';cameraOpen=true">📸</button>
+    <div class="hdr-btns" style="position:relative">
+      <!-- Font size control -->
+      <div style="position:relative">
+        <button class="hdr-btn" @click.stop="showScale=!showScale" title="字體大小" style="font-size:.88rem">🔤</button>
+        <div v-if="showScale" class="scale-panel" @click.stop style="position:absolute;top:calc(100% + 8px);right:0;z-index:400;background:#fff;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:16px;min-width:220px">
+          <div style="font-size:.75rem;font-weight:700;color:var(--ink);margin-bottom:12px">🔤 字體 / 圖示大小</div>
+          <div style="display:flex;gap:7px">
+            <button v-for="s in scaleSteps" :key="s.v"
+              class="scale-step" :class="{on:currentScale===s.v}"
+              @click="setScale(s.v)"
+              :style="{fontSize:(.75 + scaleSteps.indexOf(s)*.08)+'rem',flex:'1',height:'44px',borderRadius:'11px',border:'1.5px solid',borderColor:currentScale===s.v?'var(--teal)':'var(--border)',background:currentScale===s.v?'var(--teal-bg)':'#f9f9f8',color:currentScale===s.v?'var(--teal-d)':'var(--ink)',cursor:'pointer',fontWeight:'600',fontFamily:'DM Sans,sans-serif'}">{{s.l}}</button>
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:9px;text-align:center">
+            預覽：<span :style="{fontSize:(currentScale*14)+'px'}">鹿島神宮 15:00</span>
+          </div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:4px;text-align:center">設定自動儲存</div>
+        </div>
+      </div>
+      <button class="hdr-btn" @click="tab='prep'" title="行前準備">📋</button>
+      <button class="hdr-btn" @click="cameraOpen=true">📸</button>
       <button class="hdr-btn" @click="showTr=true">🌐</button>
       <button v-if="tab==='itinerary'" class="hdr-btn" @click="openAdd">＋</button>
     </div>
@@ -496,8 +625,8 @@ body{padding-bottom:calc(64px + var(--safe-b))}
         <div class="itin-actions">
           <button v-if="item.gmap" @click="openNav(item.gmap)" class="act-btn act-nav">🗺️ 導航</button>
           <button v-if="item.gmap" @click="openAppleNav(item.gmap)" class="act-btn act-apple">🍎</button>
-          <button v-if="item.official" @click="openNav(item.official)" class="act-btn act-official">🔗 官網</button>
-          <button v-if="item.tabelog" @click="openNav(item.tabelog)" class="act-btn act-tabelog">🍽 Tabelog</button>
+          <button v-if="item.official" @click="openUrl(item.official)" class="act-btn act-official">🔗 官網</button>
+          <button v-if="item.tabelog" @click="openUrl(item.tabelog)" class="act-btn act-tabelog">🍽 Tabelog</button>
           <button v-if="item.type==='spot'" @click="openSpotDetail(item)" class="act-btn act-guide">🎙 深度導覽</button>
           <button v-if="item.type==='food'" @click="tab='restaurants'" class="act-btn act-tabelog">🍜 查看餐廳</button>
           <button @click="editItin(item)" class="act-btn act-edit">✏️</button>
@@ -609,86 +738,7 @@ body{padding-bottom:calc(64px + var(--safe-b))}
     </div>
   </div>
 
-  <!-- Camera scan section -->
-  <div style="margin:14px 14px 8px;background:linear-gradient(135deg,var(--teal),var(--teal-l));border-radius:15px;padding:14px 16px;color:#fff">
-    <div style="font-size:.86rem;font-weight:700;margin-bottom:4px">📸 拍照翻譯菜單</div>
-    <div style="font-size:.7rem;opacity:.85;margin-bottom:9px">到了現場看不懂菜單？AI 即時翻譯！</div>
-    <button @click="cameraOpen=!cameraOpen" style="background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:9px;padding:7px 15px;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif">{{cameraOpen?'▲ 收起':'▼ 展開'}}</button>
-  </div>
-  <div v-if="cameraOpen">
-    <div v-if="!gemKey" class="card" style="margin-bottom:10px">
-      <div style="padding:14px">
-        <div style="font-size:.86rem;font-weight:700;margin-bottom:8px">🔑 設定 Gemini API Key</div>
-        <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">每天 <strong>250次</strong> 免費額度。<a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--teal)">申請免費 Key →</a></div>
-        <div style="display:flex;gap:8px">
-          <input class="inp" type="password" v-model="gemKeyInput" placeholder="AIza…" style="flex:1;font-family:monospace">
-          <button class="btn btn-teal" @click="saveGemKey">儲存</button>
-        </div>
-      </div>
-    </div>
-    <div v-if="gemKey" style="display:flex;align-items:center;gap:8px;margin:0 14px 8px;padding:8px 13px;background:var(--teal-bg);border-radius:11px;border:1px solid var(--teal-bd)">
-      <span style="font-size:.8rem;color:var(--teal-d)">✅ Gemini AI 已就緒</span>
-      <button @click="gemKey='';localStorage.removeItem('gem_key')" style="background:none;border:none;color:var(--muted);font-size:.7rem;cursor:pointer;margin-left:auto">移除</button>
-    </div>
-    <div class="card" style="margin-bottom:8px">
-      <div style="padding:14px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-          <label class="upload-zone">
-            <input type="file" accept="image/*" capture="environment" style="display:none" @change="addPhotos">
-            <span style="font-size:1.8rem">📷</span>
-            <span style="font-size:.8rem;font-weight:600;color:var(--teal)">直接拍照</span>
-          </label>
-          <label class="upload-zone">
-            <input type="file" accept="image/*" multiple style="display:none" @change="addPhotos">
-            <span style="font-size:1.8rem">🖼️</span>
-            <span style="font-size:.8rem;font-weight:600;color:var(--teal)">從相簿選取</span>
-          </label>
-        </div>
-        <div v-if="photos.length>0" style="margin-bottom:10px">
-          <div style="font-size:.72rem;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between">
-            <span>已加入 <strong style="color:var(--teal)">{{photos.length}}</strong> 張</span>
-            <button @click="photos=[];scanItems=[];selScan={}" style="background:none;border:none;color:var(--red);font-size:.7rem;cursor:pointer">清除</button>
-          </div>
-          <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
-            <div v-for="(p,i) in photos" :key="i" style="position:relative;flex-shrink:0">
-              <img :src="p.thumb" style="width:60px;height:60px;object-fit:cover;border-radius:9px;border:2px solid var(--teal-bd)">
-              <button @click="photos.splice(i,1)" style="position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;background:var(--red);border:none;color:#fff;font-size:.58rem;cursor:pointer">✕</button>
-            </div>
-          </div>
-        </div>
-        <button v-if="photos.length>0" class="btn btn-teal btn-full" @click="doScan">
-          <span v-if="!scanning">🤖 AI 分析菜單（{{photos.length}}張）</span>
-          <span v-else>分析第{{scanProg}}/{{photos.length}}張…</span>
-        </button>
-      </div>
-    </div>
-    <div v-if="scanItems.length>0" class="card" style="margin-bottom:8px">
-      <div style="padding:10px 14px;background:var(--teal-bg);border-bottom:1px solid var(--teal-bd);font-size:.8rem;color:var(--teal-d);font-weight:600">🍽️ 菜單識別結果 · 勾選要點的菜色</div>
-      <div v-for="(item,i) in scanItems" :key="i" class="scan-item" :class="{sel:selScan[i]}" @click="selScan={...selScan,[i]:!selScan[i]}">
-        <div style="font-size:1rem;width:18px;flex-shrink:0">{{selScan[i]?'☑':'☐'}}</div>
-        <div style="flex:1"><div class="scan-jp">{{item.jp}}</div><div class="scan-zh">{{item.zh}}</div></div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:.92rem;font-weight:700;color:var(--teal-d)">{{item.price?'¥'+item.price.toLocaleString():'—'}}</div>
-          <div v-if="item.price" style="font-size:.6rem;color:var(--muted)">≈NT${{Math.round(item.price*jpyTwd)}}</div>
-        </div>
-      </div>
-      <div style="padding:10px 14px"><button class="btn btn-teal btn-full" @click="openScanShowcard">📋 出示給店員</button></div>
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <div style="padding:13px">
-        <div style="font-size:.82rem;font-weight:700;margin-bottom:9px">✏️ 手動輸入日文菜名</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <input class="inp" type="text" v-model="manJp" placeholder="例：唐揚げ定食" style="flex:2">
-          <input class="inp" type="number" v-model="manPrice" placeholder="¥（選填）" style="flex:1">
-        </div>
-        <button class="btn btn-teal btn-full" @click="doManTranslate">🔍 翻譯</button>
-        <div v-if="manResult" style="margin-top:9px;background:var(--teal-bg);border-radius:11px;padding:11px 13px">
-          <div style="font-family:'Noto Serif JP',serif;font-size:1rem;color:var(--teal-d)">{{manResult.jp}}</div>
-          <div style="font-size:.82rem;color:var(--teal);font-weight:600;margin-top:4px">{{manResult.zh}}</div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </div>
 
 <!-- ───── SHOPPING PANEL ───── -->
@@ -772,7 +822,7 @@ body{padding-bottom:calc(64px + var(--safe-b))}
       <button class="shop-check" :class="{done:item.bought}" @click="item.bought=!item.bought;saveShop()">{{item.bought?'✓':''}}</button>
       <div style="flex:1">
         <div :style="item.bought?{textDecoration:'line-through',color:'var(--muted)'}:{}" style="font-size:.86rem;font-weight:500">{{catIcon(item.cat)}} {{item.name}}</div>
-        <div style="font-size:.68rem;color:var(--muted);margin-top:2px">{{item.cat}}<span v-if="item.budget"> · 預算 ¥{{item.budget.toLocaleString()}}</span></div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:2px">{{item.cat}}<span v-if="item.budget"> · 預算 ¥{{item.budget.toLocaleString()}} <span style='color:var(--teal-d);font-weight:600'>≈NT${{Math.round(item.budget*jpyTwd).toLocaleString()}}</span></span></div>
         <div v-if="item.pd" style="background:var(--teal-bg);border-radius:9px;padding:8px 10px;margin-top:6px">
           <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px">
             <span class="price-tag">🏷 未稅 ¥{{(item.pd.price_excl||0).toLocaleString()}}</span>
@@ -810,6 +860,186 @@ body{padding-bottom:calc(64px + var(--safe-b))}
     </div>
   </div>
 </div>
+
+
+  <!-- ── PREP PANEL ── -->
+  <div class="panel" :class="{on:tab==='prep'}" style="padding:0 16px 100px">
+
+    <!-- Header -->
+    <div style="padding:18px 0 4px">
+      <div style="font-size:1.1rem;font-weight:800;color:var(--ink)">✅ 行前準備</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">茨城・栃木・群馬 自駕 5/7–5/12・親子4人</div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="prep-progress">
+      <div class="prep-progress-emoji">{{prepProgressEmoji}}</div>
+      <div class="prep-progress-bar-wrap">
+        <div class="prep-progress-bar" :style="{width:prepPct+'%'}"></div>
+      </div>
+      <div class="prep-progress-txt">{{prepDone}}/{{prepTotal}} 完成</div>
+    </div>
+
+    <!-- ── SECTION: 簽証 & 入境 ── -->
+    <div class="prep-section">
+      <div class="prep-section-title">🛂 簽證 & 入境手續</div>
+      <div class="prep-card">
+        <div class="prep-card-title">🇹🇼 台灣護照免簽入境日本</div>
+        <div class="prep-card-body">
+          台灣護照持有人<b>免簽</b>，可免簽停留最長 <b>90天</b>。抵達成田後走<b>非日本國籍</b>通道，準備護照即可。<br>
+          <span class="prep-tag">90天免簽</span>
+          <span class="prep-tag warn">⚠️ 護照需有效期6個月以上</span>
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">📋 Visit Japan Web（入境卡數位化）</div>
+        <div class="prep-card-body">
+          建議出發前於「<b>Visit Japan Web</b>」完成入境審查登記，可在機場使用 QR Code 快速通關，大幅縮短排隊時間。<br>
+          <b>Step 1</b> 至 vjw-lp.digital.go.jp 建立帳號<br>
+          <b>Step 2</b> 登錄護照資訊 + 行程<br>
+          <b>Step 3</b> 申請「入境審查」及「攜帶品・別送品申告」<br>
+          <span class="prep-tag">出發前1週完成</span>
+          <span class="prep-tag warn">4人分開登錄</span>
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">🚗 國際駕照 & 日本道路規則</div>
+        <div class="prep-card-body">
+          <b>台灣駕照 + 國際駕照</b>（日內瓦公約版）均需攜帶，日本警察會要求兩者同時出示。<br>
+          日本靠<b>左行駛</b>，方向盤在右側。高速公路時速限100km，一般道路50–60km。<br>
+          <span class="prep-tag warn">⚠️ 嚴禁酒駕 血液酒精0.03%即違法</span>
+          <span class="prep-tag">ETC卡建議租車時一併租用</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: 5月天氣 & 衣著 ── -->
+    <div class="prep-section">
+      <div class="prep-section-title">🌸 5月天氣 & 建議衣著</div>
+      <div class="prep-card">
+        <div class="prep-card-title">🌡️ 茨城・栃木・群馬 5月氣候</div>
+        <div class="prep-card-body">
+          5月初氣溫約 <b>16–24°C</b>，早晚偏涼（尤其群馬山區），日間舒適。偶有陣雨，建議備輕便雨具。<br>
+          粉蝶花（ネモフィラ）盛開期間戶外陽光強，需防曬。
+          <span class="prep-tag">日夜溫差8–10°C</span>
+          <span class="prep-tag">偶陣雨機率20–30%</span>
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">👕 大人建議衣著</div>
+        <div class="prep-card-body">
+          <b>上身：</b>薄長袖T恤 × 3件 + 薄外套（可收折）× 1 + 輕型防風外套 × 1<br>
+          <b>下身：</b>輕薄長褲 × 2 + 牛仔褲 × 1<br>
+          <b>鞋子：</b>走路舒適的運動鞋（神社石板路多）<br>
+          <b>其他：</b>薄圍巾 / 絲巾，可早晚保暖也能防曬
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">👶 孩子衣著（4歲 & 7歲）</div>
+        <div class="prep-card-body">
+          <b>重點：</b>輕便 + 易洗乾 + 分層穿脫<br>
+          長袖底層 × 3件 + 薄背心或夾克 × 1 + 方便穿脫的鞋子（走神社石階）<br>
+          <b>備用：</b>薄睡衣 × 2套，濕紙巾隨時帶在身上<br>
+          <span class="prep-tag warn">⚠️ 海浜公園、兒童之國易曬傷，防曬噴霧必備</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: 導遊建議 ── -->
+    <div class="prep-section">
+      <div class="prep-section-title">🧭 專業導遊行前叮嚀</div>
+      <div class="prep-card">
+        <div class="prep-card-title">💴 現金 & 支付</div>
+        <div class="prep-card-body">
+          茨城・栃木・群馬鄉間<b>現金為主</b>，許多小餐館、道の駅、神社不接受刷卡。建議準備 <b>¥50,000–¥80,000</b> 現金，可在成田機場第一航廈地下層郵便局 ATM 提款（7-Eleven ATM 也支援海外卡）。
+          <span class="prep-tag">郵便局ATM 最優惠</span>
+          <span class="prep-tag warn">鄉間現金為主</span>
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">📱 網路 & 通訊</div>
+        <div class="prep-card-body">
+          建議出發前購買<b>日本 eSIM 或 SIM 卡</b>（IIJmio、AHamo 或台灣電信商日本方案）。全程自駕，Google Maps 離線地圖建議出發前下載茨城・栃木・群馬三縣。
+          <span class="prep-tag">離線地圖出發前下載</span>
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">🏨 訂房確認</div>
+        <div class="prep-card-body">
+          GW後一週仍是旅遊旺季，建議再次確認以下訂房：<br>
+          5/7 龜之井飯店 大洗 ／ 5/9–5/10 HOTEL R9 足利 ／ 5/11 星野集團 BEB5 土浦<br>
+          <span class="prep-tag warn">⚠️ 確認可攜帶幼童入住</span>
+          <span class="prep-tag">部分飯店需提前告知幼兒年齡</span>
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">🎡 景點預約</div>
+        <div class="prep-card-body">
+          <b>常陸海浜公園</b>（5/8）5月粉蝶花旺季，建議平日早上9:30前入場避開人潮。<br>
+          <b>足利花卉公園</b>（5/10）藤花季可能需要門票預購，請確認官網是否開放預約入場。<br>
+          <b>群馬兒童之國</b>（5/11）GW後仍熱門，建議出發前確認開放時間。
+        </div>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-title">🍱 餐廳預約建議</div>
+        <div class="prep-card-body">
+          建議出發前電話或線上預約（特別是含個室的餐廳）：<br>
+          • <b>洋食 EAST</b>（5/8 晚）：百名店，週末需提早預約<br>
+          • <b>大和田 常陸牛</b>（5/9 晚）：個室需提前訂位<br>
+          • <b>シャンポール</b>（5/10 晚）：足利小店座位少<br>
+          • <b>川豊本店</b>（5/12 午）：還車前時間緊，確認開店時間
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: 行李清單 ── -->
+    <div class="prep-section">
+      <div class="prep-section-title">🧳 行李準備清單</div>
+
+      <!-- Filter buttons -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button v-for="cat in checklistCats" :key="cat"
+          @click="checklistFilter=cat"
+          :style="{
+            padding:'5px 12px', borderRadius:'99px', fontSize:'.72rem', fontWeight:'700',
+            border:'1.5px solid', cursor:'pointer', transition:'.15s',
+            borderColor: checklistFilter===cat ? 'var(--teal)' : 'var(--border)',
+            background: checklistFilter===cat ? 'var(--teal)' : '#f9f9f8',
+            color: checklistFilter===cat ? '#fff' : 'var(--muted)'
+          }">{{cat}}</button>
+      </div>
+
+      <!-- Groups -->
+      <div v-for="grp in filteredChecklist" :key="grp.group" class="checklist-group">
+        <div class="checklist-group-title">
+          <span>{{grp.icon}}</span> {{grp.group}}
+          <span style="margin-left:auto;font-size:.7rem;color:var(--teal-d)">
+            {{grp.items.filter(i=>checked[i.id]).length}}/{{grp.items.length}}
+          </span>
+        </div>
+        <div class="prep-card" style="padding:4px 16px">
+          <div v-for="item in grp.items" :key="item.id"
+            class="check-item" @click="toggleCheck(item.id)">
+            <div class="check-box" :class="{done:checked[item.id]}"></div>
+            <div class="check-label">
+              <div class="check-name" :class="{done:checked[item.id]}">
+                {{item.name}}
+                <span v-if="item.qty" style="font-size:.7rem;color:var(--muted);font-weight:400"> ×{{item.qty}}</span>
+              </div>
+              <div v-if="item.tip" class="check-tip">{{item.tip}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reset button -->
+      <button @click="resetChecklist"
+        style="width:100%;padding:12px;border-radius:12px;border:1.5px dashed var(--border);
+        background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;margin-top:8px">
+        🔄 重置所有勾選
+      </button>
+    </div>
+  </div>
 
 <!-- ───── BOTTOM NAV ───── -->
 
@@ -889,6 +1119,100 @@ body{padding-bottom:calc(64px + var(--safe-b))}
   </button>
 </nav>
 
+
+<!-- ── CAMERA MODAL OVERLAY ── -->
+<div v-if="cameraOpen" class="cam-modal-overlay" @click.self="cameraOpen=false">
+  <div class="cam-modal">
+    <div class="cam-modal-hdr">
+      <div class="cam-modal-title">📸 拍照翻譯菜單</div>
+      <button class="cam-modal-close" @click="cameraOpen=false">✕</button>
+    </div>
+    <div class="cam-modal-body">
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:12px">到了現場看不懂菜單？AI 即時翻譯！</div>
+
+      <!-- API Key setup -->
+      <div v-if="!gemKey" class="card" style="margin-bottom:10px">
+        <div style="padding:14px">
+          <div style="font-size:.86rem;font-weight:700;margin-bottom:8px">🔑 設定 Gemini API Key</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">每天 <strong>250次</strong> 免費額度。<a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--teal)">申請免費 Key →</a></div>
+          <div style="display:flex;gap:8px">
+            <input class="inp" type="password" v-model="gemKeyInput" placeholder="AIza…" style="flex:1;font-family:monospace">
+            <button class="btn btn-teal" @click="saveGemKey">儲存</button>
+          </div>
+        </div>
+      </div>
+      <div v-if="gemKey" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 13px;background:var(--teal-bg);border-radius:11px;border:1px solid var(--teal-bd)">
+        <span style="font-size:.8rem;color:var(--teal-d)">✅ Gemini AI 已就緒</span>
+        <button @click="gemKey='';localStorage.removeItem('gem_key')" style="background:none;border:none;color:var(--muted);font-size:.7rem;cursor:pointer;margin-left:auto">移除</button>
+      </div>
+
+      <!-- Photo upload -->
+      <div class="card" style="margin-bottom:10px">
+        <div style="padding:14px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+            <label class="upload-zone">
+              <input type="file" accept="image/*" capture="environment" style="display:none" @change="addPhotos">
+              <span style="font-size:1.8rem">📷</span>
+              <span style="font-size:.8rem;font-weight:600;color:var(--teal)">直接拍照</span>
+            </label>
+            <label class="upload-zone">
+              <input type="file" accept="image/*" multiple style="display:none" @change="addPhotos">
+              <span style="font-size:1.8rem">🖼️</span>
+              <span style="font-size:.8rem;font-weight:600;color:var(--teal)">從相簿選取</span>
+            </label>
+          </div>
+          <div v-if="photos.length>0" style="margin-bottom:10px">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between">
+              <span>已加入 <strong style="color:var(--teal)">{{photos.length}}</strong> 張</span>
+              <button @click="photos=[];scanItems=[];selScan={}" style="background:none;border:none;color:var(--red);font-size:.7rem;cursor:pointer">清除</button>
+            </div>
+            <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
+              <div v-for="(p,i) in photos" :key="i" style="position:relative;flex-shrink:0">
+                <img :src="p.thumb" style="width:60px;height:60px;object-fit:cover;border-radius:9px;border:2px solid var(--teal-bd)">
+                <button @click="photos.splice(i,1)" style="position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;background:var(--red);border:none;color:#fff;font-size:.58rem;cursor:pointer">✕</button>
+              </div>
+            </div>
+          </div>
+          <button v-if="photos.length>0" class="btn btn-teal btn-full" @click="doScan">
+            <span v-if="!scanning">🤖 AI 分析菜單（{{photos.length}}張）</span>
+            <span v-else>分析第{{scanProg}}/{{photos.length}}張…</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scan results -->
+      <div v-if="scanItems.length>0" class="card" style="margin-bottom:10px">
+        <div style="padding:10px 14px;background:var(--teal-bg);border-bottom:1px solid var(--teal-bd);font-size:.8rem;color:var(--teal-d);font-weight:600">🍽️ 菜單識別結果 · 勾選要點的菜色</div>
+        <div v-for="(item,i) in scanItems" :key="i" class="scan-item" :class="{sel:selScan[i]}" @click="selScan={...selScan,[i]:!selScan[i]}">
+          <div style="font-size:1rem;width:18px;flex-shrink:0">{{selScan[i]?'☑':'☐'}}</div>
+          <div style="flex:1"><div class="scan-jp">{{item.jp}}</div><div class="scan-zh">{{item.zh}}</div></div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:.92rem;font-weight:700;color:var(--teal-d)">{{item.price?'¥'+item.price.toLocaleString():'—'}}</div>
+            <div v-if="item.price" style="font-size:.6rem;color:var(--muted)">≈NT${{Math.round(item.price*jpyTwd)}}</div>
+          </div>
+        </div>
+        <div style="padding:10px 14px"><button class="btn btn-teal btn-full" @click="openScanShowcard">📋 出示給店員</button></div>
+      </div>
+
+      <!-- Manual translate -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="padding:13px">
+          <div style="font-size:.82rem;font-weight:700;margin-bottom:9px">✏️ 手動輸入日文菜名</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input class="inp" type="text" v-model="manJp" placeholder="例：唐揚げ定食" style="flex:2">
+            <input class="inp" type="number" v-model="manPrice" placeholder="¥（選填）" style="flex:1">
+          </div>
+          <button class="btn btn-teal btn-full" @click="doManTranslate">🔍 翻譯</button>
+          <div v-if="manResult" style="margin-top:9px;background:var(--teal-bg);border-radius:11px;padding:11px 13px">
+            <div style="font-family:'Noto Serif JP',serif;font-size:1rem;color:var(--teal-d)">{{manResult.jp}}</div>
+            <div style="font-size:.82rem;color:var(--teal);font-weight:600;margin-top:4px">{{manResult.zh}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- #app -->
 <script>
 const {createApp,ref,computed,watch,onMounted} = Vue;
@@ -906,62 +1230,62 @@ const ITIN_VER = 'v1';
 const DEFAULT_ITIN = {
   0:[
     {id:1,time:'12:35',name:'抵達成田機場 & 取車',nameJp:'',place:'成田國際機場 第一航廈',duration:'',desc:'BR189 入境 → 取行李 → 取租車',note:'',type:'transport',gmap:'成田国際空港 第1ターミナル',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=200&q=70'},
-    {id:52,time:'12:30',name:'午餐：川豊（成田機場）',nameJp:'うなぎ川豊 成田空港店',place:'成田機場 第一航廈 4F',duration:'1小時',desc:'到日本第一餐，百年老店蒲燒鰻魚飯，值回票價。下午去取租車前的最佳選擇。',note:'可接受等候・Tabelog 3.62',type:'food',gmap:'うなぎ川豊 成田空港店',official:'',tabelog:'https://tabelog.com/chiba/A1201/A120101/12000017/',tabelogScore:'3.62',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80'},
+    {id:52,time:'12:30',name:'午餐：川豊（成田機場）',nameJp:'うなぎ川豊 成田空港店',place:'成田機場 第一航廈 4F',duration:'1小時',desc:'到日本第一餐，百年老店蒲燒鰻魚飯，值回票價。下午去取租車前的最佳選擇。',note:'可接受等候・Tabelog 3.62',type:'food',gmap:'うなぎ川豊 成田空港店',official:'',tabelog:'https://tabelog.com/chiba/A1204/A120401/12058179/',tabelogScore:'3.62',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80'},
     {id:2,time:'15:00',name:'鹿島神宮',nameJp:'鹿島神宮',place:'茨城県鹿嶋市宮中2306',duration:'1.5小時',desc:'東日本最古老武神神社，森林石燈籠參道氣勢磅礴，御手洗池清澈透明。',note:'古老森林參道 & 御手洗池',type:'spot',gmap:'鹿島神宮+茨城県鹿嶋市',official:'https://kashimajingu.jp/',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=200&q=70'},
     {id:53,time:'17:00',name:'晚餐：大洗 海鮮処 大森',nameJp:'味処 大森',place:'茨城県大洗町 磯前神社近く',duration:'1小時',desc:'大洗地元の海鮮老鋪，新鮮刺身、烤魚、蛤蜊料理，步行至飯店前的晚餐。爸爸可追加生魚片拼盤。',note:'大洗地元海鮮老店・建議提早到',type:'food',gmap:'味処大森+大洗町',official:'',tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8000622/',tabelogScore:'3.38',image:'https://images.unsplash.com/photo-1498654200943-1088dd4438ae?w=600&q=80'},
     {id:3,time:'17:30',name:'入住：龜之井飯店 大洗',nameJp:'亀の井ホテル大洗',place:'茨城県大洗町',duration:'',desc:'',note:'',type:'hotel',gmap:'亀の井ホテル大洗',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=200&q=70'},
   ],
   1:[
     {id:10,time:'09:30',name:'大洗水族館',nameJp:'アクアワールド茨城大洗水族館',place:'茨城県大洗町磯浜町',duration:'2~3小時',desc:'全日本飼育鯊魚種類最多，超大翻車魚必看！',note:'',type:'spot',gmap:'アクアワールド大洗',official:'https://www.aquaworld-oarai.com/',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&q=70'},
-    {id:11,time:'12:30',name:'那珂湊魚市場',nameJp:'那珂湊おさかな市場',place:'茨城県ひたちなか市',duration:'1~1.5小時',desc:'漁港直送現剖生蠔、海鮮丼，週末人氣極旺。',note:'現剖生蠔 · 海鮮丼',type:'food',gmap:'那珂湊おさかな市場',official:'',tabelog:'https://tabelog.com/ibaraki/A0804/A080401/',tabelogScore:'3.48'},
-    {id:54,time:'18:00',name:'晚餐：洋食 EAST 百名店',nameJp:'洋食レストラン EAST',place:'茨城県ひたちなか市 海浜公園車程8分',duration:'1.5小時',desc:'食べログ洋食EAST百名店2025選出。招牌手工漢堡排肉汁四溢，個室6人可。水族館+粉蝶花一天的完美收尾。',note:'需提前預約・Tabelog 3.56',type:'food',gmap:'洋食EAST+ひたちなか+東大島',official:'',tabelog:'https://tabelog.com/ibaraki/A0804/A080401/',tabelogScore:'3.56',image:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'},
+    {id:11,time:'12:30',name:'那珂湊魚市場',nameJp:'那珂湊おさかな市場',place:'茨城県ひたちなか市',duration:'1~1.5小時',desc:'漁港直送現剖生蠔、海鮮丼，週末人氣極旺。',note:'現剖生蠔 · 海鮮丼',type:'food',gmap:'那珂湊おさかな市場',official:'',tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8016535/',tabelogScore:'3.48'},
+    {id:54,time:'18:00',name:'晚餐：洋食 EAST 百名店',nameJp:'洋食レストラン EAST',place:'茨城県ひたちなか市 海浜公園車程8分',duration:'1.5小時',desc:'食べログ洋食EAST百名店2025選出。招牌手工漢堡排肉汁四溢，個室6人可。水族館+粉蝶花一天的完美收尾。',note:'需提前預約・Tabelog 3.56',type:'food',gmap:'洋食EAST+ひたちなか+東大島',official:'',tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8015190/',tabelogScore:'3.56',image:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'},
     {id:12,time:'14:30',name:'常陸海濱公園',nameJp:'国営ひたち海浜公園',place:'茨城県ひたちなか市',duration:'2~3小時',desc:'見晴之丘5月天藍色粉蝶花（ネモフィラ）盛開，茨城最美花景之一。',note:'見晴之丘粉蝶花海 💙',type:'spot',gmap:'国営ひたち海浜公園',official:'https://hitachikaihin.jp/',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1498654200943-1088dd4438ae?w=200&q=70'},
   ],
   2:[
     {id:20,time:'08:30',name:'大洗磯前神社',nameJp:'大洗磯前神社',place:'茨城県大洗町磯浜町',duration:'45分',desc:'礁石上的「神磯鳥居」，日出時最為壯觀。',note:'神磯鳥居 · 日出拍攝',type:'spot',gmap:'大洗磯前神社',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=200&q=70'},
-    {id:55,time:'12:30',name:'午餐：手打ちそば 野良',nameJp:'手打ちそば 野良（のら）',place:'茨城県笠間市 笠間稻荷徒步5分',duration:'1小時',desc:'常陸秋蕎麥手打，Q彈香氣十足。笠間稻荷参拜前的午餐首選，天婦羅蕎麥套餐孩子也喜歡。',note:'下午賣完即收・Tabelog 3.45',type:'food',gmap:'手打ちそば+笠間稲荷+茨城',official:'',tabelog:'https://tabelog.com/ibaraki/A0802/A080201/',tabelogScore:'3.45',image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80'},
+    {id:55,time:'12:30',name:'午餐：手打ちそば 野良',nameJp:'手打ちそば 野良（のら）',place:'茨城県笠間市 笠間稻荷徒步5分',duration:'1小時',desc:'常陸秋蕎麥手打，Q彈香氣十足。笠間稻荷参拜前的午餐首選，天婦羅蕎麥套餐孩子也喜歡。',note:'下午賣完即收・Tabelog 3.45',type:'food',gmap:'手打ちそば+笠間稲荷+茨城',official:'',tabelog:'',tabelogScore:'3.45',image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80'},
     {id:21,time:'10:30',name:'偕樂園',nameJp:'偕楽園',place:'茨城県水戸市',duration:'1.5小時',desc:'日本三大名園之一，梅花聞名全國，5月新綠怡人。',note:'日本三大名園',type:'spot',gmap:'偕楽園+水戸市',official:'https://ibaraki-kairakuen.jp/',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=200&q=70'},
     {id:22,time:'14:30',name:'笠間稻荷神社',nameJp:'笠間稲荷神社',place:'茨城県笠間市',duration:'1小時',desc:'日本三大稻荷之一，境內廣大，狐狸繪馬很有特色。',note:'日本三大稻荷',type:'spot',gmap:'笠間稲荷神社',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=200&q=70'},
-    {id:56,time:'18:00',name:'晚餐：大和田 常陸牛燒肉',nameJp:'大和田 水戸本店（常陸牛焼肉）',place:'足利 or 水戸方向 チェックイン前',duration:'1.5小時',desc:'A5常陸牛燒肉，個室可預約，親子友善。入住足利飯店前的晚餐，漢堡排套餐孩子最愛。',note:'建議提前訂位個室・Tabelog 3.52',type:'food',gmap:'焼肉大和田+水戸',official:'',tabelog:'https://tabelog.com/ibaraki/A0801/A080101/',tabelogScore:'3.52',image:'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80'},
+    {id:56,time:'18:00',name:'晚餐：大和田 常陸牛燒肉',nameJp:'大和田 水戸本店（常陸牛焼肉）',place:'足利 or 水戸方向 チェックイン前',duration:'1.5小時',desc:'A5常陸牛燒肉，個室可預約，親子友善。入住足利飯店前的晚餐，漢堡排套餐孩子最愛。',note:'建議提前訂位個室・Tabelog 3.52',type:'food',gmap:'焼肉大和田+水戸',official:'',tabelog:'https://tabelog.com/ibaraki/A0801/A080101/8000174/',tabelogScore:'3.52',image:'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80'},
     {id:23,time:'18:30',name:'入住：HOTEL R9 足利福富',nameJp:'',place:'栃木県足利市',duration:'',desc:'',note:'貨櫃型旅館，車位就在門口',type:'hotel',gmap:'HOTEL R9 The Yard 足利福富',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=200&q=70'},
   ],
   3:[
-    {id:57,time:'12:30',name:'午餐：森田屋 佐野ラーメン',nameJp:'森田屋 総本店（佐野ラーメン）',place:'栃木県佐野市 Outlets車程5分',duration:'1小時',desc:'佐野拉麵發源地正宗老店，清澈雞骨湯底扁寬麵，完全不辣孩子愛吃。購物血拼後的午餐最方便。',note:'週末中午排隊30分+建議早到・Tabelog 3.60',type:'food',gmap:'森田屋総本店+佐野ラーメン',official:'',tabelog:'https://tabelog.com/tochigi/A0901/A090104/9001011/',tabelogScore:'3.60',image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80'},
+    {id:57,time:'12:30',name:'午餐：森田屋 佐野ラーメン',nameJp:'森田屋 総本店（佐野ラーメン）',place:'栃木県佐野市 Outlets車程5分',duration:'1小時',desc:'佐野拉麵發源地正宗老店，清澈雞骨湯底扁寬麵，完全不辣孩子愛吃。購物血拼後的午餐最方便。',note:'週末中午排隊30分+建議早到・Tabelog 3.60',type:'food',gmap:'森田屋総本店+佐野ラーメン',official:'',tabelog:'https://tabelog.com/tochigi/A0902/A090202/9000936/',tabelogScore:'3.60',image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80'},
     {id:30,time:'10:30',name:'佐野 PREMIUM OUTLETS',nameJp:'佐野プレミアムアウトレット',place:'栃木県佐野市',duration:'2~3小時',desc:'',note:'品牌折扣購物',type:'shop',gmap:'佐野プレミアムアウトレット',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=200&q=70'},
-    {id:58,time:'19:30',name:'晚餐：洋食 シャンポール',nameJp:'洋食の店 シャンポール',place:'栃木県足利市 花公園車程10分',duration:'1小時',desc:'藤花夜間點燈後的晚餐，足利洋食老店50年以上，家庭風漢堡排孩子歡迎。',note:'看完藤花夜間點燈後前往',type:'food',gmap:'洋食シャンポール+足利市',official:'',tabelog:'https://tabelog.com/tochigi/A0902/A090201/',tabelogScore:'3.44',image:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'},
+    {id:58,time:'19:30',name:'晚餐：洋食 シャンポール',nameJp:'洋食の店 シャンポール',place:'栃木県足利市 花公園車程10分',duration:'1小時',desc:'藤花夜間點燈後的晚餐，足利洋食老店50年以上，家庭風漢堡排孩子歡迎。',note:'看完藤花夜間點燈後前往',type:'food',gmap:'洋食シャンポール+足利市',official:'',tabelog:'https://tabelog.com/tochigi/A0902/A090202/9006284/',tabelogScore:'3.44',image:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'},
     {id:31,time:'14:00',name:'足利花卉公園',nameJp:'あしかがフラワーパーク',place:'栃木県足利市',duration:'3~4小時',desc:'樹齡150年以上的日本最大藤花，CNN評全球十大最美地點，夜間點燈更是夢幻。',note:'大藤 · 白藤 · 黃藤廊道',type:'spot',gmap:'あしかがフラワーパーク',official:'https://www.ashikaga.co.jp/',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1490750967868-88df5691cc13?w=200&q=70'},
   ],
   4:[
     {id:40,time:'09:30',name:'群馬兒童之國',nameJp:'群馬こどもの国',place:'群馬県太田市',duration:'2小時',desc:'',note:'免門票親子天堂',type:'spot',gmap:'群馬こどもの国+太田市',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1575425186775-b8de9a427e67?w=200&q=70'},
-    {id:41,time:'12:30',name:'鳥常本店',nameJp:'鳥常 本店',place:'栃木県足利市',duration:'1.5小時',desc:'60年老店，招牌釜飯鍋底焦香絕品，建議早到等位。',note:'招牌釜飯 · 等候30分',type:'food',gmap:'鳥常本店+足利',official:'',tabelog:'https://tabelog.com/tochigi/A0902/A090201/',tabelogScore:'3.58'},
-    {id:59,time:'19:00',name:'晚餐：BEB5 TAMARIBA（星野集團）',nameJp:'BEB5土浦 TAMARIBA',place:'茨城県土浦市 JR土浦駅直結',duration:'1小時',desc:'星野集團品質保證，飯店內餐廳省去移動麻煩。常陸牛漢堡、茨城蔬菜咖哩孩子超喜歡。爸爸可追加那珂湊魚生拼盤。',note:'住客可直接使用・Tabelog 3.70',type:'food',gmap:'BEB5土浦+星野リゾート+TAMARIBA',official:'',tabelog:'https://tabelog.com/ibaraki/',tabelogScore:'3.70',image:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80'},
+    {id:41,time:'12:30',name:'鳥常本店',nameJp:'鳥常 本店',place:'栃木県足利市',duration:'1.5小時',desc:'60年老店，招牌釜飯鍋底焦香絕品，建議早到等位。',note:'招牌釜飯 · 等候30分',type:'food',gmap:'鳥常本店+足利',official:'',tabelog:'https://tabelog.com/tochigi/A0902/A090202/9006284/',tabelogScore:'3.58'},
+    {id:59,time:'19:00',name:'晚餐：BEB5 TAMARIBA（星野集團）',nameJp:'BEB5土浦 TAMARIBA',place:'茨城県土浦市 JR土浦駅直結',duration:'1小時',desc:'星野集團品質保證，飯店內餐廳省去移動麻煩。常陸牛漢堡、茨城蔬菜咖哩孩子超喜歡。爸爸可追加那珂湊魚生拼盤。',note:'住客可直接使用・Tabelog 3.70',type:'food',gmap:'BEB5土浦+星野リゾート+TAMARIBA',official:'',tabelog:'',tabelogScore:'3.70',image:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80'},
     {id:42,time:'18:00',name:'入住：星野集團 BEB5 土浦',nameJp:'BEB5土浦',place:'茨城県土浦市',duration:'',desc:'',note:'土浦駅直結',type:'hotel',gmap:'BEB5土浦+星野リゾート',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1547592180-85f173990554?w=200&q=70'},
   ],
   5:[
     {id:50,time:'09:30',name:'出發前往成田機場',nameJp:'',place:'',duration:'',desc:'土浦→成田 約60分',note:'',type:'transport',gmap:'成田国際空港',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=200&q=70'},
-    {id:60,time:'11:30',name:'最後午餐：川豊 成田空港（回味）',nameJp:'うなぎ川豊 成田空港店',place:'成田機場 第一航廈 4F（出境前）',duration:'45分',desc:'旅途的最後一餐，再吃一次百年老店的鰻魚飯，帶著美好回憶搭上回台的飛機。出境前最後衝刺。',note:'第一航廈出境前・BR183 13:25起飛・11:30前需辦完登機',type:'food',gmap:'うなぎ川豊 成田空港店',official:'',tabelog:'https://tabelog.com/chiba/A1201/A120101/12000017/',tabelogScore:'3.62',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80'},
+    {id:60,time:'11:30',name:'最後午餐：川豊 成田空港（回味）',nameJp:'うなぎ川豊 成田空港店',place:'成田機場 第一航廈 4F（出境前）',duration:'45分',desc:'旅途的最後一餐，再吃一次百年老店的鰻魚飯，帶著美好回憶搭上回台的飛機。出境前最後衝刺。',note:'第一航廈出境前・BR183 13:25起飛・11:30前需辦完登機',type:'food',gmap:'うなぎ川豊 成田空港店',official:'',tabelog:'https://tabelog.com/chiba/A1204/A120401/12058179/',tabelogScore:'3.62',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80'},
     {id:51,time:'11:00',name:'還車 & 辦理登機',nameJp:'',place:'成田國際機場 第一航廈',duration:'',desc:'BR183 Check-in截止12:25',note:'',type:'transport',gmap:'成田国際空港 第1ターミナル',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=200&q=70'},
   ],
 };
 const RESTAURANTS = [
-  {id:'r1',day:'d1',dayLabel:'Day1 · 午餐',type:'鰻魚飯老舖',name:'川豐（うなぎ川豊）',nameJp:'うなぎ川豊 成田空港店',score:'3.62',location:'成田機場第一航廈4F',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80',gmap:'うなぎ川豊 成田空港店',tabelog:'https://tabelog.com/chiba/A1201/A120101/12000017/',pros:['創業明治43年超過百年歷史','機場內直達無需移車','午餐可接受等候座位'],cons:['旺季排隊15-30分','價格偏高','份量日式較小'],reviews:[{text:'到日本的第一餐在這裡，值回票價！蒲燒醬汁傳承百年老味道，肉質鬆軟。',author:'台灣旅客 2024.4'},{text:'等了25分鐘但很值得，建議11:30前到。',author:'tabelog用戶'}],menu:[{jp:'うな重（特上）',zh:'特上鰻魚飯',note:'最大份量',price:4300,kids:false,raw:false,rec:'⭐推薦'},{jp:'うな重（上）',zh:'上等鰻魚飯',note:'標準份量',price:3200,kids:false,raw:false},{jp:'ひつまぶし',zh:'鰻魚茶泡飯三吃',note:'三種吃法',price:3800,kids:false,raw:false,rec:'🌟必試'},{jp:'うな丼（並）',zh:'鰻魚丼（普通）',note:'附味噌湯',price:2100,kids:true,raw:false}]},
-  {id:'r2',day:'d2',dayLabel:'Day2 · 午餐',type:'海鮮料理',name:'那珂湊 やまさ水産',nameJp:'ヤマサ水産 本店',score:'3.48',location:'茨城県ひたちなか市 那珂湊港旁',image:'https://images.unsplash.com/photo-1498654200943-1088dd4438ae?w=600&q=80',gmap:'ヤマサ水産+那珂湊+ひたちなか',tabelog:'https://tabelog.com/ibaraki/A0804/A080401/8010086/',pros:['海港直取新鮮','可看海景','兒童高腳椅可借'],cons:['週末中午等候長','停車場需付費'],reviews:[{text:'刺身超新鮮！帶孩子來完全OK，店員很熱情。',author:'親子旅遊客 2025.3'}],menu:[{jp:'海鮮丼（豪華）',zh:'豪華海鮮丼',note:'10種以上魚生',price:2800,kids:false,raw:true,rec:'🌟'},{jp:'めひかりの唐揚げ定食',zh:'眼光魚炸魚定食',note:'茨城名物',price:1800,kids:true,raw:false,rec:'👧推薦'},{jp:'焼き魚定食',zh:'烤魚定食',note:'鹽烤整條魚',price:1600,kids:true,raw:false}]},
-  {id:'r3',day:'d3',dayLabel:'Day3 · 晚餐',type:'常陸牛燒肉',name:'大和田 水戸本店',nameJp:'大和田 水戸本店（常陸牛焼肉）',score:'3.52',location:'茨城県水戸市内',image:'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80',gmap:'焼肉大和田+水戸',tabelog:'https://tabelog.com/ibaraki/A0801/A080101/',pros:['使用A5常陸牛','個室可預約','親子友善'],cons:['晚餐價格偏高','需提前訂位'],reviews:[{text:'常陸牛真的不一樣！入口即化，孩子對漢堡排超著迷。',author:'tabelog用戶 ★★★★★'}],menu:[{jp:'常陸牛カルビ（上）',zh:'常陸牛上等肋眼',note:'A5等級',price:2800,kids:false,raw:false,rec:'🌟'},{jp:'ハンバーグ定食',zh:'漢堡排定食',note:'牛肉漢堡排',price:1800,kids:true,raw:false,rec:'👧'}]},
-  {id:'r4',day:'d4',dayLabel:'Day4 · 午餐',type:'佐野拉麵',name:'森田屋 総本店',nameJp:'森田屋 総本店（佐野ラーメン）',score:'3.60',location:'栃木県佐野市 Outlets附近',image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',gmap:'森田屋総本店+佐野ラーメン',tabelog:'https://tabelog.com/tochigi/A0901/A090104/9001011/',pros:['佐野拉麵正宗老店','清淡不辣','距Outlets10分'],cons:['週末中午排隊30分+'],reviews:[{text:'扁平寬麵配清澈雞骨湯，完全不辣，四歲孩子吃光光！',author:'帶孩旅客 2024.11'}],menu:[{jp:'醤油ラーメン',zh:'醬油拉麵（招牌）',note:'清澈雞骨湯底不辣',price:850,kids:true,raw:false,rec:'🌟必點'},{jp:'餃子（6個）',zh:'煎餃（6粒）',note:'皮薄餡多',price:450,kids:true,raw:false,rec:'👧'}]},
-  {id:'r5',day:'d5',dayLabel:'Day5 · 午餐',type:'雞肉料理/釜飯',name:'鳥常本店',nameJp:'鳥常 本店',score:'3.58',location:'栃木県足利市',image:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80',gmap:'鳥常本店+足利',tabelog:'https://tabelog.com/tochigi/A0902/A090201/',pros:['60年以上老店','招牌釜飯鍋底香脆','非辣性料理親子適合'],cons:['釜飯需等20-30分','無訂位先到先得'],reviews:[{text:'鶏の釜飯鍋底的焦香味是精髓！小孩瘋狂吃炸雞塊。',author:'足利本地人推薦 2025.1'}],menu:[{jp:'鶏の釜飯',zh:'雞肉釜飯（招牌）',note:'等30分超值',price:1800,kids:false,raw:false,rec:'🌟必點'},{jp:'唐揚げ定食',zh:'炸雞塊定食',note:'酥脆多汁',price:1300,kids:true,raw:false,rec:'👧'},{jp:'親子丼',zh:'親子丼',note:'半熟蛋花',price:1200,kids:true,raw:false}]},
+  {id:'r1',day:'d1',dayLabel:'Day1 · 午餐',type:'鰻魚飯老舖',name:'川豐（うなぎ川豊）',nameJp:'うなぎ川豊 成田空港店',score:'3.62',location:'成田機場第一航廈4F',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80',gmap:'うなぎ川豊 成田空港店',tabelog:'https://tabelog.com/chiba/A1204/A120401/12058179/',pros:['創業明治43年超過百年歷史','機場內直達無需移車','午餐可接受等候座位'],cons:['旺季排隊15-30分','價格偏高','份量日式較小'],reviews:[{text:'到日本的第一餐在這裡，值回票價！蒲燒醬汁傳承百年老味道，肉質鬆軟。',author:'台灣旅客 2024.4'},{text:'等了25分鐘但很值得，建議11:30前到。',author:'tabelog用戶'}],menu:[{jp:'うな重（特上）',zh:'特上鰻魚飯',note:'最大份量',price:4300,kids:false,raw:false,rec:'⭐推薦'},{jp:'うな重（上）',zh:'上等鰻魚飯',note:'標準份量',price:3200,kids:false,raw:false},{jp:'ひつまぶし',zh:'鰻魚茶泡飯三吃',note:'三種吃法',price:3800,kids:false,raw:false,rec:'🌟必試'},{jp:'うな丼（並）',zh:'鰻魚丼（普通）',note:'附味噌湯',price:2100,kids:true,raw:false}]},
+  {id:'r2',day:'d2',dayLabel:'Day2 · 午餐',type:'海鮮料理',name:'那珂湊 やまさ水産',nameJp:'ヤマサ水産 本店',score:'3.48',location:'茨城県ひたちなか市 那珂湊港旁',image:'https://images.unsplash.com/photo-1498654200943-1088dd4438ae?w=600&q=80',gmap:'ヤマサ水産+那珂湊+ひたちなか',tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8016535/',pros:['海港直取新鮮','可看海景','兒童高腳椅可借'],cons:['週末中午等候長','停車場需付費'],reviews:[{text:'刺身超新鮮！帶孩子來完全OK，店員很熱情。',author:'親子旅遊客 2025.3'}],menu:[{jp:'海鮮丼（豪華）',zh:'豪華海鮮丼',note:'10種以上魚生',price:2800,kids:false,raw:true,rec:'🌟'},{jp:'めひかりの唐揚げ定食',zh:'眼光魚炸魚定食',note:'茨城名物',price:1800,kids:true,raw:false,rec:'👧推薦'},{jp:'焼き魚定食',zh:'烤魚定食',note:'鹽烤整條魚',price:1600,kids:true,raw:false}]},
+  {id:'r3',day:'d3',dayLabel:'Day3 · 晚餐',type:'常陸牛燒肉',name:'大和田 水戸本店',nameJp:'大和田 水戸本店（常陸牛焼肉）',score:'3.52',location:'茨城県水戸市内',image:'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80',gmap:'焼肉大和田+水戸',tabelog:'https://tabelog.com/ibaraki/A0801/A080101/8000174/',pros:['使用A5常陸牛','個室可預約','親子友善'],cons:['晚餐價格偏高','需提前訂位'],reviews:[{text:'常陸牛真的不一樣！入口即化，孩子對漢堡排超著迷。',author:'tabelog用戶 ★★★★★'}],menu:[{jp:'常陸牛カルビ（上）',zh:'常陸牛上等肋眼',note:'A5等級',price:2800,kids:false,raw:false,rec:'🌟'},{jp:'ハンバーグ定食',zh:'漢堡排定食',note:'牛肉漢堡排',price:1800,kids:true,raw:false,rec:'👧'}]},
+  {id:'r4',day:'d4',dayLabel:'Day4 · 午餐',type:'佐野拉麵',name:'森田屋 総本店',nameJp:'森田屋 総本店（佐野ラーメン）',score:'3.60',location:'栃木県佐野市 Outlets附近',image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',gmap:'森田屋総本店+佐野ラーメン',tabelog:'https://tabelog.com/tochigi/A0902/A090202/9000936/',pros:['佐野拉麵正宗老店','清淡不辣','距Outlets10分'],cons:['週末中午排隊30分+'],reviews:[{text:'扁平寬麵配清澈雞骨湯，完全不辣，四歲孩子吃光光！',author:'帶孩旅客 2024.11'}],menu:[{jp:'醤油ラーメン',zh:'醬油拉麵（招牌）',note:'清澈雞骨湯底不辣',price:850,kids:true,raw:false,rec:'🌟必點'},{jp:'餃子（6個）',zh:'煎餃（6粒）',note:'皮薄餡多',price:450,kids:true,raw:false,rec:'👧'}]},
+  {id:'r5',day:'d5',dayLabel:'Day5 · 午餐',type:'雞肉料理/釜飯',name:'鳥常本店',nameJp:'鳥常 本店',score:'3.58',location:'栃木県足利市',image:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80',gmap:'鳥常本店+足利',tabelog:'https://tabelog.com/tochigi/A0902/A090202/9006284/',pros:['60年以上老店','招牌釜飯鍋底香脆','非辣性料理親子適合'],cons:['釜飯需等20-30分','無訂位先到先得'],reviews:[{text:'鶏の釜飯鍋底的焦香味是精髓！小孩瘋狂吃炸雞塊。',author:'足利本地人推薦 2025.1'}],menu:[{jp:'鶏の釜飯',zh:'雞肉釜飯（招牌）',note:'等30分超值',price:1800,kids:false,raw:false,rec:'🌟必點'},{jp:'唐揚げ定食',zh:'炸雞塊定食',note:'酥脆多汁',price:1300,kids:true,raw:false,rec:'👧'},{jp:'親子丼',zh:'親子丼',note:'半熟蛋花',price:1200,kids:true,raw:false}]},
 
   // ── DAY 1 追加（成田周邊）──
-  {id:'r1b',day:'d1',dayLabel:'Day1 · 晚餐',type:'常陸牛洋食',
-   name:'レストラン麦わら帽子',nameJp:'レストラン麦わら帽子',
-   score:'3.38',location:'成田市 成田山門前通り 徒步5分',
+  {id:'r1b',day:'d1',dayLabel:'Day1 · 晚餐',type:'鰻・日本料理',
+   name:'川豊 別館（成田参道）',nameJp:'川豊別館',
+   score:'3.55',location:'千葉県成田市 成田山表参道沿い',
    image:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
-   gmap:'レストラン麦わら帽子+成田',
-   tabelog:'https://tabelog.com/chiba/A1201/A120101/',
+   gmap:'川豊別館+成田',
+   tabelog:'https://tabelog.com/chiba/A1204/A120401/12005811/',
    pros:['成田老街散策後方便','洋食口味兒童接受度高','可預約個室'],
    cons:['門前通週末人潮多','建議提前預約'],
    reviews:[{text:'帶小孩完全沒問題，蛋包飯的醬汁超濃郁，孩子搶著吃！',author:'tabelog用戶 2024.9'}],
    menu:[
-     {jp:'常陸牛ハンバーグステーキ',zh:'常陸牛漢堡排牛排',note:'A5和牛，肉汁四溢',price:2800,kids:false,raw:false,rec:'🌟必點'},
+     {jp:'常陸牛ハンバーグステーキ',zh:'常陸牛漢堡排牛排',note:'個室可・川豊集團別館',price:2800,kids:false,raw:false,rec:'🌟必點'},
      {jp:'ふわとろオムライス',zh:'滑嫩蛋包飯',note:'半熟蛋皮，番茄醬底',price:1600,kids:true,raw:false,rec:'👧推薦'},
      {jp:'エビグラタン',zh:'蝦仁焗烤',note:'奶油白醬，濃郁起司',price:1800,kids:true,raw:false},
      {jp:'ビーフシチューセット',zh:'燉牛肉套餐',note:'附沙拉麵包湯',price:2400,kids:false,raw:false},
@@ -975,7 +1299,7 @@ const RESTAURANTS = [
    score:'3.55',location:'成田山門前通り（非機場店）',
    image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80',
    gmap:'川豊本店+成田山門前',
-   tabelog:'https://tabelog.com/chiba/A1201/A120101/12002608/',
+   tabelog:'https://tabelog.com/chiba/A1204/A120401/12000709/',
    pros:['門前通老店比機場店更道地','可邊看師傅現烤鰻魚','歷史建築風情'],
    cons:['需等位候，旺季1小時以上','無停車場'],
    reviews:[{text:'比機場店更有老店氣氛，鰻魚肉質更厚，醬汁比例剛好。',author:'食通旅人 2025.3'}],
@@ -996,7 +1320,7 @@ const RESTAURANTS = [
    score:'3.56',location:'茨城県ひたちなか市東大島3-26-7（海浜公園車程8分）',
    image:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
    gmap:'洋食EAST+ひたちなか+東大島',
-   tabelog:'https://tabelog.com/ibaraki/A0804/A080401/',
+   tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8015190/',
    pros:['食べログ洋食EAST百名店2025','個室6人可','家庭料理風人情味'],
    cons:['週末需提前預約','座位不多'],
    reviews:[{text:'ハンバーグは飲み物です、そのくらい肉汁溢れる！子供連れ大歓迎の雰囲気が最高。',author:'tabelog常連 2025.2'}],
@@ -1015,7 +1339,7 @@ const RESTAURANTS = [
    score:'3.55',location:'茨城県ひたちなか市 常陸海浜公園車程15分',
    image:'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80',
    gmap:'京遊膳花みやこ+ひたちなか',
-   tabelog:'https://tabelog.com/ibaraki/A0804/A080401/',
+   tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8015190/',
    pros:['ゴ・エ・ミヨ2026選出（15.5/20）','懐石・京料理×茨城食材','全室個室，品味非凡'],
    cons:['價位較高（ランチ¥5000+）','需提前預約'],
    reviews:[{text:'地方でこのレベルは驚き。茨城の食材を京の技で仕上げた絶品。子供向けコースも相談可。',author:'グルメブロガー 2025.1'}],
@@ -1036,7 +1360,7 @@ const RESTAURANTS = [
    score:'3.42',location:'茨城県大洗町（偕楽園から車20分）',
    image:'https://images.unsplash.com/photo-1498654200943-1088dd4438ae?w=600&q=80',
    gmap:'居酒屋ちゅう心+大洗',
-   tabelog:'https://tabelog.com/ibaraki/A0801/A080102/',
+   tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8000763/',
    pros:['常陸牛＆地元刺身が安く食べられる','午餐CP值高','兒童椅可借'],
    cons:['居酒屋風格，白天較安靜','需確認午餐時段'],
    reviews:[{text:'常陸牛と地元の刺身を美味しくいただきました！コスパ最強の穴場。',author:'日本一周旅人 2024.10'}],
@@ -1050,17 +1374,17 @@ const RESTAURANTS = [
      {jp:'海鮮チャンポン',zh:'海鮮什錦湯麵',note:'豐富海料',price:1400,kids:true,raw:false},
      {jp:'水戸納豆定食',zh:'水戸納豆套餐',note:'正宗水戸納豆，在地味',price:1000,kids:true,raw:false}
    ]},
-  {id:'r3c',day:'d3',dayLabel:'Day3 · 備選',type:'笠間蕎麦名店',
-   name:'手打ちそば 野良（やろう）',nameJp:'手打ちそば 野良',
-   score:'3.45',location:'茨城県笠間市 笠間稲荷徒歩5分',
+  {id:'r3c',day:'d3',dayLabel:'Day3 · 備選',type:'手打ちそば',
+   name:'尚庵（笠間手打蕎麥）',nameJp:'尚庵',
+   score:'3.44',location:'茨城県笠間市 笠間稲荷神社徒步2分',
    image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',
-   gmap:'手打ちそば+笠間稲荷+茨城',
-   tabelog:'https://tabelog.com/ibaraki/A0802/A080201/',
+   gmap:'尚庵+笠間+茨城',
+   tabelog:'https://tabelog.com/ibaraki/A0801/A080103/8002186/',
    pros:['笠間稻荷參拜後直接步行','常陸秋蕎麥手打','可選せいろ或かけ'],
    cons:['麵量偏少，大食者加麵','下午賣完即收攤'],
    reviews:[{text:'香り高い常陸秋そばに感動。笠間に来たら必ず立ち寄る一軒。',author:'そば通レビュアー 2025.4'}],
    menu:[
-     {jp:'せいろそば（一枚）',zh:'竹籠蕎麥麵（一份）',note:'涼拌沾麵，香氣最足',price:900,kids:true,raw:false,rec:'🌟首選'},
+     {jp:'せいろそば（一枚）',zh:'竹籠蕎麥麵（一份）',note:'笠間稲荷徒步2分・午後賣完即止',price:900,kids:true,raw:false,rec:'🌟首選'},
      {jp:'二枚せいろ',zh:'竹籠蕎麥麵（二份）',note:'食量大者推薦',price:1700,kids:false,raw:false},
      {jp:'かけそば',zh:'湯蕎麥麵',note:'清澈柴魚高湯',price:850,kids:true,raw:false,rec:'👧適合'},
      {jp:'天せいろ',zh:'天婦羅蕎麥麵組合',note:'附炸蝦+時蔬天婦羅',price:1800,kids:true,raw:false,rec:'👧'},
@@ -1076,7 +1400,7 @@ const RESTAURANTS = [
    score:'3.44',location:'栃木県足利市 花公園車程10分',
    image:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80',
    gmap:'洋食シャンポール+足利市',
-   tabelog:'https://tabelog.com/tochigi/A0902/A090201/',
+   tabelog:'https://tabelog.com/tochigi/A0902/A090202/9006284/',
    pros:['花公園後晚餐最方便','洋食老店50年以上','家庭料理風，小孩歡迎'],
    cons:['停車場稍小','現金為主'],
    reviews:[{text:'藤の花を見た後にここで晩ご飯、もう最高のコース！ハンバーグが家庭的でほっこり。',author:'栃木在住 2025.4'}],
@@ -1090,17 +1414,17 @@ const RESTAURANTS = [
      {jp:'クリームコロッケ定食',zh:'奶油可樂餅定食',note:'附沙拉白飯',price:1400,kids:true,raw:false},
      {jp:'ミックスフライ定食',zh:'綜合炸物定食',note:'炸蝦+炸牡蠣+炸豬排',price:1800,kids:true,raw:false}
    ]},
-  {id:'r4c',day:'d4',dayLabel:'Day4 · 備選（佐野ラーメン）',type:'佐野拉麵',
-   name:'一力 佐野ラーメン',nameJp:'一力（いちりき）佐野ラーメン',
-   score:'3.39',location:'栃木県佐野市 Outlets車程5分',
+  {id:'r4c',day:'d4',dayLabel:'Day4 · 備選（佐野ラーメン）',type:'佐野ラーメン',
+   name:'万里（佐野ラーメン）',nameJp:'手打ちラーメン 万里',
+   score:'3.47',location:'栃木県佐野市 佐野アウトレット徒步圈内',
    image:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',
-   gmap:'一力+佐野ラーメン+栃木',
-   tabelog:'https://tabelog.com/tochigi/A0901/A090104/',
+   gmap:'手打ちラーメン万里+佐野',
+   tabelog:'https://tabelog.com/tochigi/A0902/A090202/9019660/',
    pros:['Outlets血拼後即可前往','清淡湯頭兒童也OK','醬油拉麵不辣'],
    cons:['座位不多','限時營業11-14時'],
    reviews:[{text:'扁麵の食感と清澄醤油スープが絶品。老舗の味わい、子供も完食！',author:'拉麵愛好家 2025.3'}],
    menu:[
-     {jp:'醤油ラーメン（並）',zh:'醬油拉麵（普通）',note:'佐野拉麵基本款，清澈不辣',price:800,kids:true,raw:false,rec:'🌟基本必點'},
+     {jp:'醤油ラーメン（並）',zh:'醬油拉麵（普通）',note:'アウトレット徒步3分・駐車場廣',price:800,kids:true,raw:false,rec:'🌟基本必點'},
      {jp:'醤油ラーメン（大盛り）',zh:'醬油拉麵（大碗）',note:'加量版',price:950,kids:false,raw:false},
      {jp:'チャーシューメン',zh:'叉燒拉麵',note:'多片叉燒',price:1050,kids:false,raw:false,rec:'🌟推薦'},
      {jp:'ワンタンメン',zh:'雲吞拉麵',note:'皮薄餡嫩',price:950,kids:true,raw:false,rec:'👧'},
@@ -1111,17 +1435,17 @@ const RESTAURANTS = [
    ]},
 
   // ── DAY 5 追加（群馬/土浦）──
-  {id:'r5b',day:'d5',dayLabel:'Day5 · 早餐/輕食（BEB5）',type:'星野集團餐廳',
-   name:'BEB5土浦 TAMARIBA',nameJp:'BEB5土浦 TAMARIBA',
+  {id:'r5b',day:'d5',dayLabel:'Day5 · 早餐/輕食（BEB5）',type:'居酒屋・ダイニング',
+   name:'BEB5土浦（星野集團）',nameJp:'BEB5土浦 TAMARIBA',
    score:'3.70',location:'茨城県土浦市 JR土浦駅直結',
    image:'https://images.unsplash.com/photo-1498654200943-1088dd4438ae?w=600&q=80',
-   gmap:'BEB5土浦+星野リゾート+TAMARIBA',
-   tabelog:'https://tabelog.com/ibaraki/',
+   gmap:'BEB5土浦+星野リゾート',
+   tabelog:'https://tabelog.com/ibaraki/A0802/A080202/8024639/',
    pros:['星野集團品質保證','住宿附早餐可選','帶孩子舒適體驗'],
    cons:['住客優先，外部需確認'],
    reviews:[{text:'ホテルのレストランなのに雰囲気が良くリーズナブル。茨城食材を使った創作料理が新鮮。',author:'旅行者 2025.2'}],
    menu:[
-     {jp:'茨城朝食プレート',zh:'茨城早餐盤',note:'在地食材，豐盛早餐',price:1800,kids:true,raw:false,rec:'住客推薦'},
+     {jp:'茨城朝食プレート',zh:'茨城早餐盤',note:'住客直接使用・土浦駅直結',price:1800,kids:true,raw:false,rec:'住客推薦'},
      {jp:'常陸牛バーガー',zh:'常陸牛漢堡',note:'A5和牛漢堡肉',price:2200,kids:false,raw:false,rec:'🌟'},
      {jp:'茨城野菜カレー',zh:'茨城蔬菜咖哩',note:'多種在地蔬菜',price:1500,kids:true,raw:false,rec:'👧'},
      {jp:'自家製スムージー',zh:'自製蔬果昔',note:'在地水果製作',price:700,kids:true,raw:false},
@@ -1135,7 +1459,7 @@ const RESTAURANTS = [
    score:'3.40',location:'群馬県渋川市 伊香保温泉途中（兒童之國車程30分）',
    image:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80',
    gmap:'水沢うどん+大澤屋+群馬',
-   tabelog:'https://tabelog.com/gunma/A1001/A100102/',
+   tabelog:'https://tabelog.com/gunma/A1004/A100401/10001525/',
    pros:['群馬三大うどんの名店','Q彈手打烏龍麵','親子皆宜，不辣'],
    cons:['距太田市約1小時','週末排隊'],
    reviews:[{text:'日本三大うどんのひとつ水沢うどん。コシが強くて子供も大好き！伊香保帰りに必寄り。',author:'群馬観光客 2024.5'}],
@@ -1151,17 +1475,17 @@ const RESTAURANTS = [
    ]},
 
   // ── DAY 6 追加（成田出發日）──
-  {id:'r6a',day:'d6',dayLabel:'Day6 · 最後午餐（成田）',type:'成田空港グルメ',
-   name:'空の郷 成田（軽食/定食）',nameJp:'空の郷（そらのさと）',
-   score:'3.35',location:'成田機場 第一航廈 出境後',
+  {id:'r6a',day:'d6',dayLabel:'Day6 · 最後午餐（成田）',type:'うなぎ',
+   name:'川豊 本店（成田山門前）',nameJp:'うなぎ川豊 本店',
+   score:'3.60',location:'千葉県成田市 成田山新勝寺表参道',
    image:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
-   gmap:'成田国際空港+第1ターミナル+レストラン',
-   tabelog:'https://tabelog.com/chiba/A1201/A120101/',
+   gmap:'うなぎ川豊本店+成田山',
+   tabelog:'https://tabelog.com/chiba/A1204/A120401/12000709/',
    pros:['出境後用餐最方便','不需移動','兒童套餐齊全'],
    cons:['機場餐廳價格偏高','選擇有限'],
    reviews:[{text:'フライト前の最後の一食。茨城の味を振り返りながらゆっくり食べました。',author:'帰国旅人 2024.8'}],
    menu:[
-     {jp:'茨城名物定食（納豆+焼き魚）',zh:'茨城名物套餐（納豆+烤魚）',note:'旅行最後一餐回味',price:1600,kids:false,raw:false,rec:'紀念推薦'},
+     {jp:'茨城名物定食（納豆+焼き魚）',zh:'茨城名物套餐（納豆+烤魚）',note:'成田山参道・百年老店・還車前',price:1600,kids:false,raw:false,rec:'紀念推薦'},
      {jp:'お子さまランチ',zh:'兒童午餐',note:'機場兒童套餐',price:900,kids:true,raw:false,rec:'👧'},
      {jp:'ラーメン',zh:'拉麵',note:'機場定番',price:1200,kids:true,raw:false},
      {jp:'カレーライス',zh:'咖哩飯',note:'日式咖哩，不辣',price:1100,kids:true,raw:false,rec:'👧'},
@@ -1170,17 +1494,17 @@ const RESTAURANTS = [
      {jp:'成田山羊羹セット',zh:'成田山羊羹套裝',note:'伴手禮順便買',price:600,kids:true,raw:false},
      {jp:'サンドイッチセット',zh:'三明治套餐',note:'輕食搭配咖啡',price:900,kids:true,raw:false}
    ]},
-  {id:'r6b',day:'d6',dayLabel:'Day6 · 備選（出發前）',type:'成田餃子',
-   name:'餃子の満州 成田店',nameJp:'餃子の満州 成田店',
-   score:'3.34',location:'成田市 成田機場車程10分',
+  {id:'r6b',day:'d6',dayLabel:'Day6 · 備選（出發前）',type:'うなぎ・日本料理',
+   name:'川豊 別館（成田参道備選）',nameJp:'川豊別館',
+   score:'3.55',location:'千葉県成田市 成田山表参道沿い',
    image:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80',
-   gmap:'餃子の満州+成田市',
-   tabelog:'https://tabelog.com/chiba/A1201/A120101/',
+   gmap:'川豊別館+成田山',
+   tabelog:'https://tabelog.com/chiba/A1204/A120401/12005811/',
    pros:['平價快速，趕飛機前理想','餃子CP值超高','兒童接受度高'],
    cons:['並非高檔餐廳，氣氛一般'],
    reviews:[{text:'コスパ最強！餃子6個180円、お財布に優しくてラストグルメにぴったり。',author:'節約旅人 2025.1'}],
    menu:[
-     {jp:'餃子（6個）',zh:'煎餃（6粒）',note:'招牌薄皮煎餃，CP值之王',price:180,kids:true,raw:false,rec:'🌟必點'},
+     {jp:'餃子（6個）',zh:'煎餃（6粒）',note:'本店備選・個室可・還車前',price:180,kids:true,raw:false,rec:'🌟必點'},
      {jp:'餃子（12個）',zh:'煎餃（12粒）',note:'2份超值',price:360,kids:true,raw:false},
      {jp:'チャーハン（並）',zh:'炒飯（普通）',note:'附湯，樸實好吃',price:530,kids:true,raw:false,rec:'👧'},
      {jp:'餃子定食',zh:'煎餃套餐',note:'餃子+炒飯+湯',price:700,kids:true,raw:false,rec:'🌟推薦'},
@@ -1312,6 +1636,7 @@ setup(){
   function typeThumb(t){return{spot:'🗺',food:'🍜',hotel:'🏨',transport:'🚗',shop:'🛍'}[t]||'📍';}
   function typeTagClass(t){return{spot:'tag-spot',food:'tag-food',hotel:'tag-hotel',transport:'tag-trans',shop:'tag-shop'}[t]||'tag-spot';}
   function openNav(q){window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q),'_blank');}
+  function openUrl(url){window.open(url,'_blank');}
   function openAppleNav(q){window.open('https://maps.apple.com/?q='+encodeURIComponent(q),'_blank');}
 
   // Edit modal
@@ -1334,16 +1659,28 @@ setup(){
     showSpotModal.value=true;spotLoading.value=true;spotData.value=null;
     if(!gemKey.value){spotData.value={name:item.name,nameJp:item.nameJp||'',tags:[],guide:'請先設定 Gemini API Key 才能取得 AI 深度導覽。',tips:'',gmap:item.gmap,official:item.official,tabelog:item.tabelog};spotLoading.value=false;return;}
     try{
-      const prompt='你是資深日本導遊，請以繁體中文介紹景點「'+item.name+'」。只回傳JSON（無markdown）：{"name":"'+item.name+'","nameJp":"'+(item.nameJp||'')+'","tags":["標籤1","標籤2"],"guide":"深度介紹約300字（分段，含歷史文化、必看亮點、參觀建議）","tips":"導遊小提示（含親子注意事項，100字內）"}';
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.3,maxOutputTokens:1200,responseMimeType:'application/json'}})});
-      const d=await resp.json();
-      if(d.error) throw new Error(d.error.message);
-      const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
-      const clean=txt.replace(/```json|```/gi,'').trim();
-      const parsed=JSON.parse(clean.slice(clean.indexOf('{'),clean.lastIndexOf('}')+1));
-      parsed.gmap=item.gmap;parsed.official=item.official||parsed.official||'';parsed.tabelog=item.tabelog||'';
+      var sysPrompt='你是資深日本導遊。請以繁體中文回答。只能回傳純JSON，禁止任何markdown、程式碼區塊、前後文字。';
+      var userPrompt='介紹日本景點「'+item.name+'」。JSON格式如下（完整輸出，不可截斷）：{"name":"景點名稱","nameJp":"日文名","tags":["關鍵字1","關鍵字2","關鍵字3"],"guide":"300字深度介紹，包含歷史文化、必看亮點、最佳參觀時間及建議","tips":"50字親子導遊小提示"}';
+      var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:sysPrompt}]},contents:[{parts:[{text:userPrompt}]}],generationConfig:{temperature:.3,maxOutputTokens:2048,responseMimeType:'application/json'}})});
+      var d=await resp.json();
+      if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
+      var txt='';
+      if(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0]){
+        txt=d.candidates[0].content.parts[0].text||'';
+      }
+      if(!txt) throw new Error('回傳內容為空');
+      // Clean and extract JSON safely
+      var clean=txt.replace(/```json[\s\S]*?```|```[\s\S]*?```/g,'').replace(/^[^{]*/,'').replace(/[^}]*$/,'').trim();
+      if(!clean||clean[0]!=='{') {
+        // fallback: find first { to last }
+        var fi=txt.indexOf('{'); var li=txt.lastIndexOf('}');
+        if(fi>=0&&li>fi) clean=txt.slice(fi,li+1);
+        else throw new Error('找不到有效 JSON');
+      }
+      var parsed=JSON.parse(clean);
+      parsed.gmap=item.gmap;parsed.official=item.official||'';parsed.tabelog=item.tabelog||'';
       spotData.value=parsed;
-    }catch(e){spotData.value={name:item.name,nameJp:item.nameJp||'',tags:[],guide:'載入失敗：'+e.message,tips:'',gmap:item.gmap,official:item.official||'',tabelog:item.tabelog||''};}
+    }catch(e){spotData.value={name:item.name,nameJp:item.nameJp||'',tags:[],guide:'載入失敗：'+e.message+'。請確認 Gemini API Key 是否有效，或稍後再試。',tips:'',gmap:item.gmap,official:item.official||'',tabelog:item.tabelog||''};}
     spotLoading.value=false;
   }
 
@@ -1381,6 +1718,159 @@ setup(){
   });
 
   // MAP
+
+  // ── FONT SCALE ──
+  var SCALE_KEY = 'appScale';
+  var scaleSteps = [{v:0.85,l:'小'},{v:1,l:'標'},{v:1.15,l:'大'},{v:1.3,l:'特大'}];
+  var currentScale = ref(parseFloat(localStorage.getItem(SCALE_KEY))||1);
+  var showScale = ref(false);
+
+  function setScale(v){
+    currentScale.value = v;
+    localStorage.setItem(SCALE_KEY, String(v));
+    document.documentElement.style.setProperty('--scale', String(v));
+    // Apply actual font size to entire app
+    document.getElementById('app').style.fontSize = (v * 16) + 'px';
+    toast('字體已設為 ' + (scaleSteps.find(function(s){return s.v===v;})||{l:'?'}).l);
+    showScale.value = false;
+  }
+  function initScale(){
+    var saved = parseFloat(localStorage.getItem(SCALE_KEY));
+    if(saved && saved > 0) {
+      currentScale.value = saved;
+      document.documentElement.style.setProperty('--scale', String(saved));
+      document.getElementById('app').style.fontSize = (saved * 16) + 'px';
+    }
+  }
+
+
+  // ── PREP / CHECKLIST ──
+  var CHECKLIST_DATA = [
+    { group:'證件 & 重要文件', icon:'📄', cat:'必備', items:[
+      {id:'c01', name:'護照（全家）', tip:'有效期需距出發日6個月以上'},
+      {id:'c02', name:'國際駕照', tip:'需與台灣駕照一起攜帶'},
+      {id:'c03', name:'台灣駕照', tip:'日本警察會要求兩者同時出示'},
+      {id:'c04', name:'Visit Japan Web QR Code', tip:'建議截圖儲存，機場快速通關用'},
+      {id:'c05', name:'訂房確認信', tip:'龜之井大洗 / R9足利 / BEB5土浦'},
+      {id:'c06', name:'租車確認單', tip:'成田機場取車，確認兒童座椅預訂'},
+      {id:'c07', name:'旅遊保險文件', tip:'含緊急救援聯絡電話'},
+      {id:'c08', name:'信用卡（1–2張）', tip:'Visa/Mastercard，部分日本ATM僅接受特定卡'},
+    ]},
+    { group:'現金 & 支付', icon:'💴', cat:'必備', items:[
+      {id:'m01', name:'日幣現金 ¥50,000–¥80,000', tip:'鄉間地區現金為主，成田ATM可提款'},
+      {id:'m02', name:'零錢包', tip:'日本自動販賣機、停車場常用硬幣'},
+    ]},
+    { group:'電子 & 通訊', icon:'📱', cat:'必備', items:[
+      {id:'e01', name:'手機 SIM 卡 / eSIM（日本用）', tip:'建議出發前在台灣購買'},
+      {id:'e02', name:'Google Maps 離線地圖下載', tip:'下載茨城・栃木・群馬三縣，自駕必備'},
+      {id:'e03', name:'充電線 & 行動電源', tip:'外出景點時間長，行動電源必備'},
+      {id:'e04', name:'日本插頭確認', tip:'日本110V，台灣電器直插即可'},
+      {id:'e05', name:'相機 / 記憶卡', tip:'海浜公園、足利花公園值得記錄'},
+    ]},
+    { group:'大人衣物', icon:'👔', cat:'衣物', items:[
+      {id:'a01', name:'薄長袖T恤 ×3', tip:'5月日夜溫差大，長袖最實用'},
+      {id:'a02', name:'薄外套（可折疊）×1', tip:'晚間或山區氣溫15°C以下'},
+      {id:'a03', name:'輕型防風外套 ×1', tip:'常陸海浜公園海風較強'},
+      {id:'a04', name:'輕薄長褲 ×2', tip:''},
+      {id:'a05', name:'休閒牛仔褲 ×1', tip:''},
+      {id:'a06', name:'舒適步行運動鞋', tip:'神社石板路多，避免高跟或硬底鞋'},
+      {id:'a07', name:'拖鞋或室內鞋', tip:'傳統旅館、部分餐廳需脫鞋'},
+      {id:'a08', name:'薄圍巾 / 絲巾 ×1', tip:'早晚保暖 + 防曬雙用'},
+      {id:'a09', name:'內衣褲 ×6套', tip:'5晚+備用1套'},
+      {id:'a10', name:'薄睡衣 ×2', tip:''},
+    ]},
+    { group:'孩子衣物（4歲 & 7歲）', icon:'👶', cat:'衣物', items:[
+      {id:'k01', name:'長袖上衣 各×3', tip:'共6件'},
+      {id:'k02', name:'薄夾克 / 背心 各×1', tip:''},
+      {id:'k03', name:'長褲 各×2', tip:''},
+      {id:'k04', name:'容易穿脫的鞋子', tip:'神社石階多，避免繫鞋帶款'},
+      {id:'k05', name:'備用衣物（多一套）', tip:'孩子外出易弄髒'},
+      {id:'k06', name:'薄睡衣 各×2', tip:''},
+    ]},
+    { group:'盥洗 & 個人用品', icon:'🧴', cat:'個人', items:[
+      {id:'p01', name:'防曬乳 SPF50+', tip:'海浜公園、足利花公園日曬強'},
+      {id:'p02', name:'防蚊液', tip:'神社森林及自然公園必備'},
+      {id:'p03', name:'兒童防曬噴霧', tip:'孩子皮膚敏感選兒童專用款'},
+      {id:'p04', name:'濕紙巾（大包）', tip:'孩子隨時需要'},
+      {id:'p05', name:'牙刷 & 牙膏', tip:'飯店通常提供，但自備較安心'},
+      {id:'p06', name:'個人常備藥（大人）', tip:'頭痛藥、胃藥、感冒藥、暈車藥'},
+      {id:'p07', name:'兒童常備藥', tip:'退燒藥、過敏藥、腸胃藥（兒童劑量）'},
+      {id:'p08', name:'OK繃 & 消毒棉片', tip:'小朋友活潑好動備用'},
+      {id:'p09', name:'護唇膏 & 護手霜', tip:'日本春天較乾燥'},
+    ]},
+    { group:'孩子專用', icon:'🧸', cat:'孩子', items:[
+      {id:'ch01', name:'兒童汽車安全座椅確認', tip:'租車時確認已預訂，日本法律規定必須使用'},
+      {id:'ch02', name:'備用零食', tip:'長途開車孩子等待用'},
+      {id:'ch03', name:'小玩具 / 繪本', tip:'車上時間打發'},
+      {id:'ch04', name:'兒童水杯', tip:'景點常需帶水'},
+      {id:'ch05', name:'推車 / 揹帶（4歲）', tip:'4歲走長路易疲倦，建議備輕型推車'},
+    ]},
+    { group:'出發前確認事項', icon:'☑️', cat:'必備', items:[
+      {id:'t01', name:'Visit Japan Web 4人登錄完成', tip:'取得QR碼截圖儲存'},
+      {id:'t02', name:'足利花卉公園門票確認', tip:'5月藤花季可能需預購票'},
+      {id:'t03', name:'常陸海浜公園入場計劃', tip:'旺季建議9:30前入場'},
+      {id:'t04', name:'洋食EAST（5/8晚）預約', tip:'百名店週末需提早'},
+      {id:'t05', name:'大和田常陸牛（5/9晚）預約', tip:'個室需提前訂位'},
+      {id:'t06', name:'シャンポール（5/10晚）確認', tip:'小店建議電話確認座位'},
+      {id:'t07', name:'Google Maps 離線地圖下載', tip:'茨城・栃木・群馬三縣'},
+      {id:'t08', name:'手機 SIM / eSIM 購買', tip:'出發前在台灣購買較划算'},
+      {id:'t09', name:'成田ATM換日幣計劃', tip:'郵便局ATM手續費最低'},
+      {id:'t10', name:'BR189 報到資訊確認', tip:'桃園T2，08:25起飛，建議06:00到機場'},
+    ]},
+  ];
+
+  var checklistCats = ref(['全部','必備','衣物','個人','孩子']);
+  var checklistFilter = ref('全部');
+
+  var savedChecked = {};
+  try { savedChecked = JSON.parse(localStorage.getItem('prepChecked') || '{}'); } catch(e2) {}
+  var checked = ref(savedChecked);
+
+  var filteredChecklist = computed(function() {
+    if(checklistFilter.value === '全部') return CHECKLIST_DATA;
+    return CHECKLIST_DATA.filter(function(g) { return g.cat === checklistFilter.value; });
+  });
+
+  var prepTotal = computed(function() {
+    var total = 0;
+    CHECKLIST_DATA.forEach(function(g) { total += g.items.length; });
+    return total;
+  });
+
+  var prepDone = computed(function() {
+    var done = 0;
+    CHECKLIST_DATA.forEach(function(g) {
+      g.items.forEach(function(i) { if(checked.value[i.id]) done++; });
+    });
+    return done;
+  });
+
+  var prepPct = computed(function() {
+    return prepTotal.value ? Math.round(prepDone.value / prepTotal.value * 100) : 0;
+  });
+
+  var prepProgressEmoji = computed(function() {
+    var p = prepPct.value;
+    if(p === 100) return '🎉';
+    if(p >= 80) return '💪';
+    if(p >= 50) return '🚀';
+    if(p >= 20) return '📦';
+    return '🧳';
+  });
+
+  function toggleCheck(id) {
+    var obj = Object.assign({}, checked.value);
+    obj[id] = !obj[id];
+    checked.value = obj;
+    localStorage.setItem('prepChecked', JSON.stringify(obj));
+  }
+
+  function resetChecklist() {
+    checked.value = {};
+    localStorage.removeItem('prepChecked');
+    toast('行李清單已重置');
+  }
+
   const mapDay=ref(0),gpsStatus=ref('尚未定位'),gpsLat=ref(null),gpsLng=ref(null);
   let lmap=null,markers=[];
   const mapSpots=computed(function(){return(itin.value[mapDay.value]||[]).filter(function(x){return x.gmap||x.place;});});
@@ -1466,7 +1956,7 @@ setup(){
       scanProg.value=qi+1;
       const photo=photos.value[qi];
       try{
-        const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:PROMPT}]},contents:[{parts:[{inline_data:{mime_type:photo.mime,data:photo.base64}},{text:'Translate this menu.'}]}],generationConfig:{temperature:.1,maxOutputTokens:8192,responseMimeType:'application/json'}})});
+        const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:PROMPT}]},contents:[{parts:[{inline_data:{mime_type:photo.mime,data:photo.base64}},{text:'Translate this menu.'}]}],generationConfig:{temperature:.1,maxOutputTokens:8192,responseMimeType:'application/json'}})});
         const d=await resp.json();
         if(d.error) throw new Error(d.error.message);
         const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
@@ -1488,7 +1978,7 @@ setup(){
     if(!manJp.value.trim()) return;
     if(!gemKey.value){toast('請先設定 Gemini API Key');return;}
     try{
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'Translate Japanese dish name to Traditional Chinese. Respond ONLY with JSON: {"jp":"japanese","zh":"traditional chinese","note":"desc 15 chars","kids_ok":true/false,"is_raw":true/false}'}]},contents:[{parts:[{text:manJp.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'Translate Japanese dish name to Traditional Chinese. Respond ONLY with JSON: {"jp":"japanese","zh":"traditional chinese","note":"desc 15 chars","kids_ok":true/false,"is_raw":true/false}'}]},contents:[{parts:[{text:manJp.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
       const d=await resp.json();
       const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
       const clean=txt.replace(/```json|```/gi,'').trim();
@@ -1533,7 +2023,7 @@ setup(){
     item.querying=true;item.pd=null;saveShop();
     const prompt='You are a Japan shopping expert. Respond ONLY with JSON: {"price_excl":integer or 0,"price_incl":integer,"where":"cheapest store","note":"remark under 20 chars"}. Product: '+item.name;
     try{
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japan shopping expert. Respond ONLY with valid JSON, no markdown.'}]},contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.1,maxOutputTokens:300,responseMimeType:'application/json'}})});
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japan shopping expert. Respond ONLY with valid JSON, no markdown.'}]},contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.1,maxOutputTokens:300,responseMimeType:'application/json'}})});
       const d=await resp.json();
       if(d.error) throw new Error(d.error.message);
       const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
@@ -1576,7 +2066,7 @@ setup(){
     if(!gemKey.value){toast('請先設定 Gemini API Key');return;}
     trLoading.value=true;trResult.value=null;
     try{
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japanese translator. Respond ONLY with JSON: {"jp":"Japanese text","zh":"Traditional Chinese translation","reading":"romaji or reading if useful"}'}]},contents:[{parts:[{text:'Translate: '+trInput.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japanese translator. Respond ONLY with JSON: {"jp":"Japanese text","zh":"Traditional Chinese translation","reading":"romaji or reading if useful"}'}]},contents:[{parts:[{text:'Translate: '+trInput.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
       const d=await resp.json();
       const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
       const clean=txt.replace(/```json|```/gi,'').trim();
@@ -1588,16 +2078,21 @@ setup(){
 
   // INIT
   onMounted(function(){
-    loadAllWx();  // Load all 6 days weather at once on startup
+    loadAllWx();
+    initScale();
+    document.addEventListener('click', function(){ showScale.value=false; });
     // Load saved rate
     const sr=localStorage.getItem('rateStr');if(sr) rateInput.value=sr;
   });
 
   return {
     tabs,tab,toastOn,toastMsg,
+    checklistCats,checklistFilter,filteredChecklist,checked,toggleCheck,resetChecklist,
+    prepTotal,prepDone,prepPct,prepProgressEmoji,
+    scaleSteps,currentScale,showScale,setScale,
     wxIdx,selWx,wxDesc,wxAdvice,packingTips,
     days,dayIdx,curDay,loadWx,loadAllWx,
-    curItems,ampm,hhmm,dotColor,typeLabel,typeTagClass,typeThumb,openNav,openAppleNav,
+    curItems,ampm,hhmm,dotColor,typeLabel,typeTagClass,typeThumb,openNav,openAppleNav,openUrl,
     showEditModal,editItem,openAdd,editItin,closeEdit,saveEdit,deleteItin,
     showSpotModal,spotLoading,spotData,openSpotDetail,
     mapDay,gpsStatus,gpsLat,gpsLng,doGps,repinMap,flyTo,mapSpots,
