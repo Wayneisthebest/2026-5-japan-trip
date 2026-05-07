@@ -385,6 +385,18 @@ body{padding-bottom:calc(64px + var(--safe-b))}
 }
 .cam-modal-body { padding:14px 16px; }
 
+
+.romaji-tag {
+  display:inline-block;
+  font-size:.58rem; font-weight:600; letter-spacing:.04em;
+  color:var(--teal-d); background:var(--teal-bg);
+  border:1px solid var(--teal-bd);
+  border-radius:5px; padding:1px 6px;
+  margin-left:7px; vertical-align:middle;
+  font-family:'DM Sans',sans-serif;
+  white-space:nowrap;
+}
+
 </style>
 </head>
 <body>
@@ -509,7 +521,7 @@ body{padding-bottom:calc(64px + var(--safe-b))}
     <div style="font-size:.82rem;color:#999;margin-top:3px">Order Sheet · ご注文</div>
   </div>
   <div v-for="(item,i) in cardItems" :key="i" class="sc-row">
-    <div style="flex:1"><div class="sc-name">{{item.jp}}</div><div class="sc-zh">{{item.zh}}</div></div>
+    <div style="flex:1"><div class="sc-name">{{item.jp}}<span v-if="toRomaji(item.jp)" class="romaji-tag">{{toRomaji(item.jp)}}</span></div><div class="sc-zh">{{item.zh}}</div></div>
     <div class="qty-big">
       <button @click="item.qty=Math.max(1,item.qty-1)">−</button>
       <span>{{item.qty}}</span>
@@ -581,11 +593,11 @@ body{padding-bottom:calc(64px + var(--safe-b))}
 
   <!-- Flight card -->
   <div v-if="dayIdx===0" class="flight-card">
-    <div class="fl-label">OUTBOUND · 長榮航空 BR189</div>
+    <div class="fl-label">OUTBOUND · 酷航 Scoot TR866</div>
     <div class="fl-route">
-      <div class="fl-ap"><div class="fl-code">TPE</div><div class="fl-time">08:25 桃園T2</div></div>
-      <div class="fl-mid"><div class="fl-mid-row"><hr><span>✈️</span><hr></div><div style="font-size:.62rem;opacity:.75;letter-spacing:.03em;margin-top:1px">3h 10m</div></div>
-      <div class="fl-ap"><div class="fl-code">NRT</div><div class="fl-time">12:35 成田T1</div></div>
+      <div class="fl-ap"><div class="fl-code">TPE</div><div class="fl-time">06:45 桃園T1</div></div>
+      <div class="fl-mid"><div class="fl-mid-row"><hr><span>✈️</span><hr></div><div style="font-size:.62rem;opacity:.75;letter-spacing:.03em;margin-top:1px">3h 30m</div></div>
+      <div class="fl-ap"><div class="fl-code">NRT</div><div class="fl-time">11:15 成田T1</div></div>
     </div>
   </div>
   <div v-if="dayIdx===5" class="flight-card">
@@ -711,7 +723,7 @@ body{padding-bottom:calc(64px + var(--safe-b))}
           <div class="menu-section-title">📄 點餐建議（直接給店員看）</div>
           <div v-for="m in r.menu" :key="m.jp" class="menu-row">
             <div style="flex:1">
-              <div class="menu-jp">{{m.jp}}</div>
+              <div class="menu-jp">{{m.jp}}<span v-if="toRomaji(m.jp)" class="romaji-tag">{{toRomaji(m.jp)}}</span></div>
               <div class="menu-zh">{{m.zh}}<span v-if="m.note" style="margin-left:4px;color:var(--muted)">· {{m.note}}</span></div>
               <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">
                 <span v-if="m.kids" style="background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:7px;padding:1px 7px;font-size:.6rem;font-weight:600">👧 小孩適合</span>
@@ -1185,7 +1197,7 @@ body{padding-bottom:calc(64px + var(--safe-b))}
         <div style="padding:10px 14px;background:var(--teal-bg);border-bottom:1px solid var(--teal-bd);font-size:.8rem;color:var(--teal-d);font-weight:600">🍽️ 菜單識別結果 · 勾選要點的菜色</div>
         <div v-for="(item,i) in scanItems" :key="i" class="scan-item" :class="{sel:selScan[i]}" @click="selScan={...selScan,[i]:!selScan[i]}">
           <div style="font-size:1rem;width:18px;flex-shrink:0">{{selScan[i]?'☑':'☐'}}</div>
-          <div style="flex:1"><div class="scan-jp">{{item.jp}}</div><div class="scan-zh">{{item.zh}}</div></div>
+          <div style="flex:1"><div class="scan-jp">{{item.jp}}<span v-if="toRomaji(item.jp)" class="romaji-tag">{{toRomaji(item.jp)}}</span></div><div class="scan-zh">{{item.zh}}</div></div>
           <div style="text-align:right;flex-shrink:0">
             <div style="font-size:.92rem;font-weight:700;color:var(--teal-d)">{{item.price?'¥'+item.price.toLocaleString():'—'}}</div>
             <div v-if="item.price" style="font-size:.6rem;color:var(--muted)">≈NT${{Math.round(item.price*jpyTwd)}}</div>
@@ -1204,7 +1216,7 @@ body{padding-bottom:calc(64px + var(--safe-b))}
           </div>
           <button class="btn btn-teal btn-full" @click="doManTranslate">🔍 翻譯</button>
           <div v-if="manResult" style="margin-top:9px;background:var(--teal-bg);border-radius:11px;padding:11px 13px">
-            <div style="font-family:'Noto Serif JP',serif;font-size:1rem;color:var(--teal-d)">{{manResult.jp}}</div>
+            <div style="font-family:'Noto Serif JP',serif;font-size:1rem;color:var(--teal-d)">{{manResult.jp}}<span v-if="toRomaji(manResult.jp)" class="romaji-tag">{{toRomaji(manResult.jp)}}</span></div>
             <div style="font-size:.82rem;color:var(--teal);font-weight:600;margin-top:4px">{{manResult.zh}}</div>
           </div>
         </div>
@@ -1229,8 +1241,8 @@ const TRIP_DAYS = [
 const ITIN_VER = 'v1';
 const DEFAULT_ITIN = {
   0:[
-    {id:1,time:'12:35',name:'抵達成田機場 & 取車',nameJp:'',place:'成田國際機場 第一航廈',duration:'',desc:'BR189 入境 → 取行李 → 取租車',note:'',type:'transport',gmap:'成田国際空港 第1ターミナル',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=200&q=70'},
-    {id:52,time:'12:30',name:'午餐：川豊（成田機場）',nameJp:'うなぎ川豊 成田空港店',place:'成田機場 第一航廈 4F',duration:'1小時',desc:'到日本第一餐，百年老店蒲燒鰻魚飯，值回票價。下午去取租車前的最佳選擇。',note:'可接受等候・Tabelog 3.62',type:'food',gmap:'うなぎ川豊 成田空港店',official:'',tabelog:'https://tabelog.com/chiba/A1204/A120401/12058179/',tabelogScore:'3.62',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80'},
+    {id:1,time:'11:15',name:'抵達成田機場 & 取車',nameJp:'',place:'成田國際機場 第一航廈',duration:'',desc:'TR866 入境 → 取行李 → 取租車',note:'',type:'transport',gmap:'成田国際空港 第1ターミナル',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=200&q=70'},
+    {id:52,time:'11:30',name:'午餐：川豊（成田機場）',nameJp:'うなぎ川豊 成田空港店',place:'成田機場 第一航廈 4F',duration:'1小時',desc:'到日本第一餐，百年老店蒲燒鰻魚飯，值回票價。下午去取租車前的最佳選擇。',note:'可接受等候・Tabelog 3.62',type:'food',gmap:'うなぎ川豊 成田空港店',official:'',tabelog:'https://tabelog.com/chiba/A1204/A120401/12058179/',tabelogScore:'3.62',image:'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80'},
     {id:2,time:'15:00',name:'鹿島神宮',nameJp:'鹿島神宮',place:'茨城県鹿嶋市宮中2306',duration:'1.5小時',desc:'東日本最古老武神神社，森林石燈籠參道氣勢磅礴，御手洗池清澈透明。',note:'古老森林參道 & 御手洗池',type:'spot',gmap:'鹿島神宮+茨城県鹿嶋市',official:'https://kashimajingu.jp/',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=200&q=70'},
     {id:53,time:'17:00',name:'晚餐：大洗 海鮮処 大森',nameJp:'味処 大森',place:'茨城県大洗町 磯前神社近く',duration:'1小時',desc:'大洗地元の海鮮老鋪，新鮮刺身、烤魚、蛤蜊料理，步行至飯店前的晚餐。爸爸可追加生魚片拼盤。',note:'大洗地元海鮮老店・建議提早到',type:'food',gmap:'味処大森+大洗町',official:'',tabelog:'https://tabelog.com/ibaraki/A0801/A080102/8000622/',tabelogScore:'3.38',image:'https://images.unsplash.com/photo-1498654200943-1088dd4438ae?w=600&q=80'},
     {id:3,time:'17:30',name:'入住：龜之井飯店 大洗',nameJp:'亀の井ホテル大洗',place:'茨城県大洗町',duration:'',desc:'',note:'',type:'hotel',gmap:'亀の井ホテル大洗',official:'',tabelog:'',tabelogScore:'',image:'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=200&q=70'},
@@ -1661,7 +1673,7 @@ setup(){
     try{
       var sysPrompt='你是資深日本導遊。請以繁體中文回答。只能回傳純JSON，禁止任何markdown、程式碼區塊、前後文字。';
       var userPrompt='介紹日本景點「'+item.name+'」。JSON格式如下（完整輸出，不可截斷）：{"name":"景點名稱","nameJp":"日文名","tags":["關鍵字1","關鍵字2","關鍵字3"],"guide":"300字深度介紹，包含歷史文化、必看亮點、最佳參觀時間及建議","tips":"50字親子導遊小提示"}';
-      var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:sysPrompt}]},contents:[{parts:[{text:userPrompt}]}],generationConfig:{temperature:.3,maxOutputTokens:2048,responseMimeType:'application/json'}})});
+      var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:sysPrompt}]},contents:[{parts:[{text:userPrompt}]}],generationConfig:{temperature:.3,maxOutputTokens:2048,responseMimeType:'application/json'}})});
       var d=await resp.json();
       if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
       var txt='';
@@ -1815,7 +1827,7 @@ setup(){
       {id:'t07', name:'Google Maps 離線地圖下載', tip:'茨城・栃木・群馬三縣'},
       {id:'t08', name:'手機 SIM / eSIM 購買', tip:'出發前在台灣購買較划算'},
       {id:'t09', name:'成田ATM換日幣計劃', tip:'郵便局ATM手續費最低'},
-      {id:'t10', name:'BR189 報到資訊確認', tip:'桃園T2，08:25起飛，建議06:00到機場'},
+      {id:'t10', name:'TR866 報到資訊確認', tip:'桃園T1，06:45起飛，建議04:45到機場'},
     ]},
   ];
 
@@ -1869,6 +1881,57 @@ setup(){
     checked.value = {};
     localStorage.removeItem('prepChecked');
     toast('行李清單已重置');
+  }
+
+
+  // ── ROMAJI (Japanese → English pronunciation) ──
+  function toRomaji(str) {
+    if (!str) return '';
+    // Multi-char combinations first (digraphs)
+    var r = str
+      .replace(/きゃ|キャ/g,'kya').replace(/きゅ|キュ/g,'kyu').replace(/きょ|キョ/g,'kyo')
+      .replace(/しゃ|シャ/g,'sha').replace(/しゅ|シュ/g,'shu').replace(/しょ|ショ/g,'sho')
+      .replace(/ちゃ|チャ/g,'cha').replace(/ちゅ|チュ/g,'chu').replace(/ちょ|チョ/g,'cho')
+      .replace(/にゃ|ニャ/g,'nya').replace(/にゅ|ニュ/g,'nyu').replace(/にょ|ニョ/g,'nyo')
+      .replace(/ひゃ|ヒャ/g,'hya').replace(/ひゅ|ヒュ/g,'hyu').replace(/ひょ|ヒョ/g,'hyo')
+      .replace(/みゃ|ミャ/g,'mya').replace(/みゅ|ミュ/g,'myu').replace(/みょ|ミョ/g,'myo')
+      .replace(/りゃ|リャ/g,'rya').replace(/りゅ|リュ/g,'ryu').replace(/りょ|リョ/g,'ryo')
+      .replace(/ぎゃ|ギャ/g,'gya').replace(/ぎゅ|ギュ/g,'gyu').replace(/ぎょ|ギョ/g,'gyo')
+      .replace(/じゃ|ジャ/g,'ja').replace(/じゅ|ジュ/g,'ju').replace(/じょ|ジョ/g,'jo')
+      .replace(/びゃ|ビャ/g,'bya').replace(/びゅ|ビュ/g,'byu').replace(/びょ|ビョ/g,'byo')
+      .replace(/ぴゃ|ピャ/g,'pya').replace(/ぴゅ|ピュ/g,'pyu').replace(/ぴょ|ピョ/g,'pyo')
+      // Single kana
+      .replace(/あ|ア/g,'a').replace(/い|イ/g,'i').replace(/う|ウ/g,'u').replace(/え|エ/g,'e').replace(/お|オ/g,'o')
+      .replace(/か|カ/g,'ka').replace(/き|キ/g,'ki').replace(/く|ク/g,'ku').replace(/け|ケ/g,'ke').replace(/こ|コ/g,'ko')
+      .replace(/さ|サ/g,'sa').replace(/し|シ/g,'shi').replace(/す|ス/g,'su').replace(/せ|セ/g,'se').replace(/そ|ソ/g,'so')
+      .replace(/た|タ/g,'ta').replace(/ち|チ/g,'chi').replace(/つ|ツ/g,'tsu').replace(/て|テ/g,'te').replace(/と|ト/g,'to')
+      .replace(/な|ナ/g,'na').replace(/に|ニ/g,'ni').replace(/ぬ|ヌ/g,'nu').replace(/ね|ネ/g,'ne').replace(/の|ノ/g,'no')
+      .replace(/は|ハ/g,'ha').replace(/ひ|ヒ/g,'hi').replace(/ふ|フ/g,'fu').replace(/へ|ヘ/g,'he').replace(/ほ|ホ/g,'ho')
+      .replace(/ま|マ/g,'ma').replace(/み|ミ/g,'mi').replace(/む|ム/g,'mu').replace(/め|メ/g,'me').replace(/も|モ/g,'mo')
+      .replace(/や|ヤ/g,'ya').replace(/ゆ|ユ/g,'yu').replace(/よ|ヨ/g,'yo')
+      .replace(/ら|ラ/g,'ra').replace(/り|リ/g,'ri').replace(/る|ル/g,'ru').replace(/れ|レ/g,'re').replace(/ろ|ロ/g,'ro')
+      .replace(/わ|ワ/g,'wa').replace(/を|ヲ/g,'wo').replace(/ん|ン/g,'n')
+      .replace(/が|ガ/g,'ga').replace(/ぎ|ギ/g,'gi').replace(/ぐ|グ/g,'gu').replace(/げ|ゲ/g,'ge').replace(/ご|ゴ/g,'go')
+      .replace(/ざ|ザ/g,'za').replace(/じ|ジ/g,'ji').replace(/ず|ズ/g,'zu').replace(/ぜ|ゼ/g,'ze').replace(/ぞ|ゾ/g,'zo')
+      .replace(/だ|ダ/g,'da').replace(/ぢ|ヂ/g,'ji').replace(/づ|ヅ/g,'zu').replace(/で|デ/g,'de').replace(/ど|ド/g,'do')
+      .replace(/ば|バ/g,'ba').replace(/び|ビ/g,'bi').replace(/ぶ|ブ/g,'bu').replace(/べ|ベ/g,'be').replace(/ぼ|ボ/g,'bo')
+      .replace(/ぱ|パ/g,'pa').replace(/ぴ|ピ/g,'pi').replace(/ぷ|プ/g,'pu').replace(/ぺ|ペ/g,'pe').replace(/ぽ|ポ/g,'po')
+      .replace(/ぁ|ァ/g,'a').replace(/ぃ|ィ/g,'i').replace(/ぅ|ゥ/g,'u').replace(/ぇ|ェ/g,'e').replace(/ぉ|ォ/g,'o')
+      .replace(/っ|ッ/g,'').replace(/ー/g,'-')
+      // Kanji common food terms
+      .replace(/重/g,'ju').replace(/丼/g,'don').replace(/定食/g,'teishoku')
+      .replace(/焼/g,'yaki').replace(/揚/g,'age').replace(/煮/g,'ni')
+      .replace(/刺身/g,'sashimi').replace(/寿司|鮨/g,'sushi').replace(/天ぷら|天麩羅/g,'tempura')
+      .replace(/ラーメン/g,'ramen').replace(/うどん/g,'udon').replace(/そば/g,'soba')
+      .replace(/鰻|うなぎ/g,'unagi').replace(/鮭/g,'sake').replace(/鯖/g,'saba')
+      .replace(/豚/g,'buta').replace(/牛/g,'gyu').replace(/鶏|鳥/g,'tori')
+      .replace(/卵|玉子/g,'tamago').replace(/魚/g,'sakana').replace(/肝/g,'kimo')
+      .replace(/巻/g,'maki').replace(/飯/g,'meshi').replace(/茶/g,'cha')
+      .replace(/白/g,'shiro').replace(/特上/g,'tokujo').replace(/上/g,'jo').replace(/並/g,'nami')
+      // strip leftover CJK
+      .replace(/[　-鿿豈-﫿]/g,'').replace(/\s+/g,' ').trim();
+    // Capitalize first letter
+    return r ? r.charAt(0).toUpperCase() + r.slice(1) : '';
   }
 
   const mapDay=ref(0),gpsStatus=ref('尚未定位'),gpsLat=ref(null),gpsLng=ref(null);
@@ -1950,23 +2013,36 @@ setup(){
     if(!gemKey.value){toast('請先設定 Gemini API Key');return;}
     scanning.value=true;scanItems.value=[];selScan.value={};
     const total=photos.value.length;
-    const PROMPT='You are a Japan restaurant menu translator. Respond ONLY with JSON (no markdown): {"items":[{"jp":"Japanese name","zh":"Traditional Chinese","price":integer or null,"note":"desc under 15 chars","kids_ok":true/false,"is_raw":true/false}]}. kids_ok=suitable for kids 4-7, is_raw=contains raw fish.';
-    let all=[];
-    for(let qi=0;qi<total;qi++){
+    const PROMPT='You are a Japan restaurant menu expert. Look at this menu image carefully. Extract ALL dishes visible. Respond ONLY with valid JSON, no markdown, no explanation: {"items":[{"jp":"Japanese dish name as written","zh":"Traditional Chinese translation","price":number or null,"note":"brief description under 15 Chinese chars","kids_ok":true or false,"is_raw":true or false}]}. kids_ok means suitable for children age 4-7. is_raw means contains raw fish/meat.';
+    var all=[];
+    for(var qi=0;qi<total;qi++){
       scanProg.value=qi+1;
-      const photo=photos.value[qi];
+      var photo=photos.value[qi];
       try{
-        const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:PROMPT}]},contents:[{parts:[{inline_data:{mime_type:photo.mime,data:photo.base64}},{text:'Translate this menu.'}]}],generationConfig:{temperature:.1,maxOutputTokens:8192,responseMimeType:'application/json'}})});
-        const d=await resp.json();
+        var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:PROMPT},{inline_data:{mime_type:photo.mime,data:photo.base64}}]}],generationConfig:{temperature:.1,maxOutputTokens:4096}})});
+        var d=await resp.json();
         if(d.error) throw new Error(d.error.message);
-        const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
-        const clean=txt.replace(/```json|```/gi,'').trim();
-        const parsed=JSON.parse(clean.slice(clean.indexOf('{'),clean.lastIndexOf('}')+1));
-        if(parsed.items) all=all.concat(parsed.items);
-      }catch(e){console.log('scan err',e);}
+        var txt='';
+        if(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0]){
+          txt=d.candidates[0].content.parts[0].text||'';
+        }
+        if(!txt) throw new Error('empty response');
+        // Extract JSON robustly
+        var fi=txt.indexOf('{'); var li=txt.lastIndexOf('}');
+        if(fi<0||li<0) throw new Error('no JSON found');
+        var parsed=JSON.parse(txt.slice(fi,li+1));
+        if(parsed.items&&parsed.items.length) all=all.concat(parsed.items);
+      }catch(e){
+        console.log('scan err photo '+(qi+1),e.message);
+        toast('第'+(qi+1)+'張分析失敗：'+e.message.slice(0,30));
+      }
     }
-    const seen=new Set();all=all.filter(function(x){if(seen.has(x.jp)) return false;seen.add(x.jp);return true;});
-    scanItems.value=all;scanning.value=false;
+    var seen={};
+    all=all.filter(function(x){if(!x.jp||seen[x.jp]) return false;seen[x.jp]=1;return true;});
+    scanItems.value=all;
+    scanning.value=false;
+    if(!all.length) toast('未能識別菜單，請確認圖片清晰且包含日文菜名');
+    else toast('識別完成！共'+all.length+'道菜');
   }
   function openScanShowcard(){
     const items=scanItems.value.filter(function(_,i){return!!selScan.value[i];}).map(function(x){return{jp:x.jp,zh:x.zh,price:x.price||0,qty:1};});
@@ -1978,7 +2054,7 @@ setup(){
     if(!manJp.value.trim()) return;
     if(!gemKey.value){toast('請先設定 Gemini API Key');return;}
     try{
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'Translate Japanese dish name to Traditional Chinese. Respond ONLY with JSON: {"jp":"japanese","zh":"traditional chinese","note":"desc 15 chars","kids_ok":true/false,"is_raw":true/false}'}]},contents:[{parts:[{text:manJp.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'Translate Japanese dish name to Traditional Chinese. Respond ONLY with JSON: {"jp":"japanese","zh":"traditional chinese","note":"desc 15 chars","kids_ok":true/false,"is_raw":true/false}'}]},contents:[{parts:[{text:manJp.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
       const d=await resp.json();
       const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
       const clean=txt.replace(/```json|```/gi,'').trim();
@@ -2023,7 +2099,7 @@ setup(){
     item.querying=true;item.pd=null;saveShop();
     const prompt='You are a Japan shopping expert. Respond ONLY with JSON: {"price_excl":integer or 0,"price_incl":integer,"where":"cheapest store","note":"remark under 20 chars"}. Product: '+item.name;
     try{
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japan shopping expert. Respond ONLY with valid JSON, no markdown.'}]},contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.1,maxOutputTokens:300,responseMimeType:'application/json'}})});
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japan shopping expert. Respond ONLY with valid JSON, no markdown.'}]},contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.1,maxOutputTokens:300,responseMimeType:'application/json'}})});
       const d=await resp.json();
       if(d.error) throw new Error(d.error.message);
       const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
@@ -2066,7 +2142,7 @@ setup(){
     if(!gemKey.value){toast('請先設定 Gemini API Key');return;}
     trLoading.value=true;trResult.value=null;
     try{
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japanese translator. Respond ONLY with JSON: {"jp":"Japanese text","zh":"Traditional Chinese translation","reading":"romaji or reading if useful"}'}]},contents:[{parts:[{text:'Translate: '+trInput.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+gemKey.value,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'You are a Japanese translator. Respond ONLY with JSON: {"jp":"Japanese text","zh":"Traditional Chinese translation","reading":"romaji or reading if useful"}'}]},contents:[{parts:[{text:'Translate: '+trInput.value}]}],generationConfig:{temperature:.1,maxOutputTokens:200,responseMimeType:'application/json'}})});
       const d=await resp.json();
       const txt=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0])?d.candidates[0].content.parts[0].text:'';
       const clean=txt.replace(/```json|```/gi,'').trim();
@@ -2087,6 +2163,7 @@ setup(){
 
   return {
     tabs,tab,toastOn,toastMsg,
+    toRomaji,
     checklistCats,checklistFilter,filteredChecklist,checked,toggleCheck,resetChecklist,
     prepTotal,prepDone,prepPct,prepProgressEmoji,
     scaleSteps,currentScale,showScale,setScale,
